@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <script src="/public/loader.js" type="module"></script>
+  </head>
+  <body>
+    <div class="text-gray-700 bg-gray-400 p-2">
+      StreamVR Model Server
+    </div>
+    <div class="container mx-auto px-9 m-4">
+      <div class="grid grid-flow-row grid-cols-4 gap-4">
+        <% for (const m of Models) { %>
+        <%- include('./model', { ModelName: m.filename, ModelDetails: m }) %>
+        <% } %>
+
+        <% for (const m of Models) { %><script type="module">
+          loadModel('<%= m.filename %>')
+        </script>
+        <% } %>
+      </div>
+    </div>
+
+    <script>
+      setTimeout(() => {
+        window.dispatchEvent(new Event('afterLoad'));
+      }, 100)
+      
+    </script>
+  </body>
+</html>

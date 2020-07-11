@@ -430,6 +430,11 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# NodeJS Ignore
+**/node_modules
+StreamVR.ModelServer/models
+StreamVR.ModelServer/temp
+
 /StreamVR.Unity/Assets/Resources/Families
 /StreamVR.Unity/Assets/Resources/Materials/StreamVR_Tiles 25 x 25
 /StreamVR.Unity/Assets/Resources/Materials/StreamVR_Paint - Behr Corp - WINE NOT - Marquee - Eggshell
