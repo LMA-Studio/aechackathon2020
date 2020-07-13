@@ -24,5 +24,11 @@ namespace LMAStudio.StreamVR.Common.Models
 {
     public class Family: Element
     {
+        public string FamilyName { get; set; }
+        public string ModelName { get; set; }
+        public string Manufacturer { get; set; }
+        public string Description { get; set; }
+        public string Tag { get; set; }
+        public string URL { get; set; }
     }
 }

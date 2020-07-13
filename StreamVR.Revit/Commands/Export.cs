@@ -26,6 +26,9 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace LMAStudio.StreamVR.Revit.Commands
 {
@@ -105,17 +108,47 @@ namespace LMAStudio.StreamVR.Revit.Commands
 
                 part++;
             }
+            
+            byte[] file_bytes = Encoding.ASCII.GetBytes(fullObjectSB.ToString());
 
-            string path = Path.GetTempPath() + "\\StreamVR";
-            Directory.CreateDirectory(path);
-            string filename = $"{path}\\StreamVRTest.obj";
-            File.WriteAllText(filename, fullObjectSB.ToString());
-
-            return new Message
+            try
             {
-                Type = "OBJ",
-                Data = filename
-            };
+                var dto = _converter.ConvertToDTO(family).ToObject<LMAStudio.StreamVR.Common.Models.Family>();
+
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    MultipartFormDataContent form = new MultipartFormDataContent();
+
+                    form.Add(new StringContent(dto.Name ?? ""), "symbolName");
+                    form.Add(new StringContent(dto.FamilyName ?? ""), "familyName");
+                    form.Add(new StringContent(dto.ModelName ?? ""), "modelName");
+                    form.Add(new StringContent(dto.Manufacturer ?? ""), "publisher");
+                    form.Add(new StringContent(dto.Description ?? ""), "description");
+                    form.Add(new StringContent(dto.Tag ?? ""), "tag");
+                    form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{family.UniqueId}.obj");
+
+                    HttpResponseMessage response = httpClient.PostAsync(dto.URL, form).Result;
+
+                    response.EnsureSuccessStatusCode();
+
+                    string sd = response.Content.ReadAsStringAsync().Result;
+                }
+
+                return new Message
+                {
+                    Type = "OBJ",
+                    Data = dto.URL
+                };
+            }
+            catch (Exception e)
+            {
+
+                return new Message
+                {
+                    Type = "ERROR",
+                    Data = $"Error: {family.Name} ({family.Id}) {e.ToString()}"
+                };
+            }
         }
     }
 }

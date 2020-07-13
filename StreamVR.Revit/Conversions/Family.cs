@@ -27,24 +27,30 @@ using LMAStudio.StreamVR.Common.Models;
 
 namespace LMAStudio.StreamVR.Revit.Conversions
 {
-    public class FamilyConverter: IConverter<Autodesk.Revit.DB.Family>
+    public class FamilyConverter: IConverter<Autodesk.Revit.DB.FamilySymbol>
     {
-        public JObject ConvertToDTO(Autodesk.Revit.DB.Family source)
+        public JObject ConvertToDTO(Autodesk.Revit.DB.FamilySymbol source)
         {
             LMAStudio.StreamVR.Common.Models.Family dest = new LMAStudio.StreamVR.Common.Models.Family
             {
                 Id = source.Id.ToString(),
                 Name = source.Name,
+                FamilyName = source.get_Parameter(BuiltInParameter.ALL_MODEL_FAMILY_NAME)?.AsString(),
+                ModelName = source.GetParameters("Product name").FirstOrDefault()?.AsString(),
+                Manufacturer = source.GetParameters("Manufacturer name").FirstOrDefault()?.AsString(),
+                Description = source.get_Parameter(BuiltInParameter.ALL_MODEL_DESCRIPTION)?.AsValueString(),
+                Tag = source.get_Parameter(BuiltInParameter.ELEM_CATEGORY_PARAM)?.AsValueString(),
+                URL = $"http://192.168.0.119:5000/api/model/{source.UniqueId}"
             };
 
             return JObject.FromObject(dest);
         }
 
-        public void MapFromDTO(JObject sourceJSON, Autodesk.Revit.DB.Family dest)
+        public void MapFromDTO(JObject sourceJSON, Autodesk.Revit.DB.FamilySymbol dest)
         {
         }
 
-        public Autodesk.Revit.DB.Family CreateFromDTO(Document doc, JObject source)
+        public Autodesk.Revit.DB.FamilySymbol CreateFromDTO(Document doc, JObject source)
         {
             throw new NotImplementedException();
         }

@@ -74,17 +74,35 @@ namespace LMAStudio.StreamVR.Revit
             this.Command_Export = new Export(Debug, this.Converter);
 
 
-            this.Command_Export.Execute(doc, new Message
-            {
-                Type = "EXPORT",
-                Reply = null,
-                Data = JsonConvert.SerializeObject(new
-                {
-                    Id = "30560"
-                })
-            });
+            //IEnumerable<string> families = new FilteredElementCollector(doc).
+            //    OfClass(typeof(FamilySymbol)).
+            //    Select(e => e.Id.ToString());
 
-            // this.ListenForMessages(doc, "192.168.0.119:7002");
+            //Debug("Number of families " + families.Count());
+
+            //foreach(string id in families)
+            //{
+            //    try
+            //    {
+            //        Message response = this.Command_Export.Execute(doc, new Message
+            //        {
+            //            Type = "EXPORT",
+            //            Reply = null,
+            //            Data = JsonConvert.SerializeObject(new
+            //            {
+            //                Id = id // "56182"
+            //            })
+            //        });
+
+            //        Debug(response.Data);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Debug($"Error 2 {id} {e.ToString()}");
+            //    }
+            //}
+
+            this.ListenForMessages(doc, "192.168.0.119:7002");
 
             return Result.Succeeded;
         }
