@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class ShootingPaintScript : MonoBehaviour
 {
     public XRNode inputSource;
+    public XRRayInteractor rightInteractorRay;
 
     public float speed = 40;
 
@@ -18,6 +20,13 @@ public class ShootingPaintScript : MonoBehaviour
 
     private void Update()
     {
+        Vector3 pos = new Vector3();
+        Vector3 norm = new Vector3();
+        int index = 0;
+        bool validTarget = false;
+
+        bool isRightInteractorRayHovering = rightInteractorRay.TryGetHitInfo(ref pos, ref norm, ref index, ref validTarget);
+
         InputDevice device = InputDevices.GetDeviceAtXRNode(inputSource);
 
         bool clicked;
@@ -28,7 +37,10 @@ public class ShootingPaintScript : MonoBehaviour
             if (!clicking)
             {
                 clicking = true;
-                Fire();
+                if (!isRightInteractorRayHovering)
+                {
+                    Fire();
+                }
             }
         }
         else

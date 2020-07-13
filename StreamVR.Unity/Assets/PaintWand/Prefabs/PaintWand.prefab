@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputSource: 5
+  rightInteractorRay: {fileID: 0}
   speed: 40
   paintBlob: {fileID: 5047294384480237503, guid: ff9a4314b5caf2245a1760397b105bd6,
     type: 3}
@@ -126,7 +127,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 80991d2c51ed4fd49b5c359359f7addc, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

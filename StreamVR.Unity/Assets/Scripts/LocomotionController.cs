@@ -7,12 +7,12 @@ public class LocomotionController : MonoBehaviour
 {
     public XRController leftTeleportRay;
     public XRController rightTeleportRay;
+
     public InputHelpers.Button teleportActivationButton;
     public float activationThreshold = 0.1f;
     
     public XRRayInteractor leftInteractorRay;
     public XRRayInteractor rightInteractorRay;
-
     public bool enableLeftTeleport {get; set;} = true;
     public bool enableRightTeleport {get; set;}  = true;
 
@@ -35,6 +35,7 @@ public class LocomotionController : MonoBehaviour
             bool isRightInteractorRayHovering = rightInteractorRay.TryGetHitInfo(ref pos, ref norm, ref index, ref validTarget);
             rightTeleportRay.gameObject.SetActive(enableRightTeleport && CheckIfActivated(rightTeleportRay) && !isRightInteractorRayHovering);
         }
+
     }
 
     public bool CheckIfActivated(XRController controller)
