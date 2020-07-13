@@ -32,7 +32,7 @@ namespace LMAStudio.StreamVR.Revit.Conversions
     {
         public JObject ConvertToDTO(Autodesk.Revit.DB.FamilyInstance source)
         {
-            Autodesk.Revit.DB.Family fam = source.Symbol.Family;
+            Autodesk.Revit.DB.FamilySymbol fam = source.Symbol;
 
             BoundingBoxXYZ bb = source.get_BoundingBox(null);
             Autodesk.Revit.DB.Transform trans = source.GetTransform();
@@ -117,27 +117,15 @@ namespace LMAStudio.StreamVR.Revit.Conversions
 
             Autodesk.Revit.DB.XYZ newOrigin = new Autodesk.Revit.DB.XYZ(famI.Transform.Origin.X, famI.Transform.Origin.Y, famI.Transform.Origin.Z);
 
-            Autodesk.Revit.DB.Family fam = doc.GetElement(new ElementId(Int32.Parse(famI.FamilyId))) as Autodesk.Revit.DB.Family;
+            Autodesk.Revit.DB.FamilySymbol fam = doc.GetElement(new ElementId(Int32.Parse(famI.FamilyId))) as Autodesk.Revit.DB.FamilySymbol;
             if (fam == null)
             {
                 throw new Exception($"Failed to find family with id {famI.FamilyId}");
             }
 
-            ElementId firstSymbolId = fam?.GetFamilySymbolIds()?.FirstOrDefault();
-            if (firstSymbolId == null)
-            {
-                throw new Exception($"No family symbols exist on family {famI.FamilyId}");
-            }
-
-            Autodesk.Revit.DB.FamilySymbol firstSymbol = doc.GetElement(firstSymbolId) as Autodesk.Revit.DB.FamilySymbol;
-            if (firstSymbol == null)
-            {
-                throw new Exception($"No family symbols exists with id {firstSymbolId}");
-            }
-
             return doc.Create.NewFamilyInstance(
                 newOrigin,
-                firstSymbol,
+                fam,
                 StructuralType.NonStructural
             );
         }
