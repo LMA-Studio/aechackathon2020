@@ -1,7 +1,7 @@
-<div class="max-w-sm m-auto rounded overflow-hidden shadow-lg">
+<div class="max-w-sm rounded overflow-hidden shadow-lg">
           <div id="viewport_<%= ModelName %>" style="height: 300px;"></div>
           <div class="px-6 py-4">
-            <div class="font-bold text-xl mb-2"><%= ModelDetails.name %></div>
+            <div class="font-bold text-xl mb-2"><%= ModelDetails.modelName || ModelDetails.familyName %></div>
             <p class="text-gray-700 text-base mb-2">
               [<%= ModelDetails.tag %>]
             </p>

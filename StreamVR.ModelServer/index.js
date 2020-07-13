@@ -31,7 +31,7 @@ app.use(compression({
 const publicDir = path.join(__dirname, 'server/public')
 require('./server/logic/cache').InitCache(publicDir);
 app.use('/public', express.static(publicDir, {
-  maxAge: 86400000
+  maxAge: 0 // 86400000
 }));
 app.use(bodyParser.urlencoded());
 

@@ -13,7 +13,9 @@ module.exports = function(req, res) {
   fs.renameSync(currentLocation, path.join(destination, 'model.obj'));
   fs.writeFileSync(path.join(destination, 'details.json'), Buffer.from(
     JSON.stringify({
-      name: req.body.name,
+      familyName: req.body.familyName,
+      symbolName: req.body.symbolName,
+      modelName: req.body.modelName,
       tag: req.body.tag,
       description: req.body.description,
       publisher: req.body.publisher,
