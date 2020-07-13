@@ -49,7 +49,7 @@ namespace LMAStudio.StreamVR.Unity.Extensions
             XYZ by = t.BasisY;
             XYZ bz = t.BasisZ;
 
-            float angle = 180 - Mathf.Atan2((float)t.BasisX.Y, (float)t.BasisX.X) * 180 / Mathf.PI;
+            float angle = 180 - Mathf.Atan2((float)t.BasisX.Y, (float)t.BasisX.X) * 180 / Mathf.PI + 180;
 
             Matrix4x4 m = Matrix4x4.Rotate(Quaternion.AngleAxis(angle, Vector3.up));
 

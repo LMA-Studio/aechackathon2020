@@ -30,11 +30,10 @@ using LMAStudio.StreamVR.Common.Models;
 using LMAStudio.StreamVR.Unity.Logic;
 using LMAStudio.StreamVR.Common;
 using System.Collections;
-using UnityEditor;
 
 namespace LMAStudio.StreamVR.Unity.Scripts
 {
-    public class StreamVRController : MonoBehaviour
+    public class StreamVRController_FamiliesPlus : MonoBehaviour
     {
         public string natsEndpoint = "192.168.0.119:7002";
         public Text loadingText = null;
@@ -97,30 +96,17 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             }
         }
 
-#if UNITY_EDITOR
-        [MenuItem("StreamVR/Shutdown Server")]
-        public static void ShutdownInterface()
+        private void LoadAll()
         {
-            var comms = new Communicator("192.168.0.119:7002", Debug.Log);
-            comms.Connect();
-            comms.Publish(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
-        }
-#endif
-        public void LoadAll()
-        {
-            this.LoadMaterials();
-            this.LoadFamilies();
-            this.LoadWalls();
-            this.LoadFloors();
-            this.LoadCeilings();
-            this.LoadFamilyInstances();
-        }
-
-        public void LoadMaterials()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Material", "Material");
-            List<Common.Models.Material> materials = dataSet.Select(x => x.ToObject<Common.Models.Material>()).ToList();
-            MaterialLibrary.LoadMaterials(materials);
+            try
+            {
+                this.LoadFamilies();
+                this.LoadFamilyInstances();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
 
         public void LoadFamilies()
@@ -130,92 +116,11 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             FamilyLibrary.LoadFamilies(families);
         }
 
-        public void LoadWalls()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Wall", "Wall");
-            List<Wall> walls = dataSet.Select(x => x.ToObject<Wall>()).ToList();
-            this.GetComponent<WallPlacer>().Place(walls);
-        }
-
-        public void LoadFloors()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Floor", "Floor");
-            List<Floor> floors = dataSet.Select(x => x.ToObject<Floor>()).ToList();
-            this.GetComponent<FloorPlacer>().Place(floors);
-        }
-
-        public void LoadCeilings()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Ceiling", "Ceiling");
-            List<Ceiling> ceilings = dataSet.Select(x => x.ToObject<Ceiling>()).ToList();
-            this.GetComponent<CeilingPlacer>().Place(ceilings);
-        }
-
         public void LoadFamilyInstances()
         {
             List<JObject> dataSet = LoadType("Autodesk.Revit.DB.FamilyInstance", "FamilyInstance");
             List<FamilyInstance> familyInstances = dataSet.Select(x => x.ToObject<FamilyInstance>()).ToList();
             this.GetComponent<FamilyPlacer>().Place(familyInstances);
-        }
-
-        public void Shutdown()
-        {
-            Display("Not Connected");
-            comms.Publish(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
-        }
-
-        public void SaveFamilyInstance(FamilyInstance fam)
-        {
-            Debug.Log($"Saving {fam.Id} {fam.Name}");
-            Display($"Saving {fam.Id} {fam.Name}");
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-            {
-                Type = "SET",
-                Data = JsonConvert.SerializeObject(fam)
-            }, 5000);
-            Debug.Log(JsonConvert.SerializeObject(response));
-
-            if (fam.HostId != null)
-            {
-                Message getResponse = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-                {
-                    Type = "GET",
-                    Data = JsonConvert.SerializeObject(new
-                    {
-                        Id = fam.HostId
-                    })
-                }, 5000);
-
-                GeometryElement geo = JObject.Parse(getResponse.Data).ToObject<GeometryElement>();
-                GameObject obj = GeometryLibrary.GetObject(geo.Id);
-                Helpers.MeshGenerator.ResetFaceMeshes(geo, obj);
-            }
-        }
-
-        public FamilyInstance PlaceFamilyInstance(FamilyInstance fam)
-        {
-            Debug.Log($"Placing {fam.FamilyId}");
-            Display($"Placing {fam.FamilyId}");
-
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-            {
-                Type = "CREATE",
-                Data = JsonConvert.SerializeObject(fam)
-            }, 5000);
-            Debug.Log(JsonConvert.SerializeObject(response));
-
-            return JObject.Parse(response.Data).ToObject<FamilyInstance>();
-        }
-
-        public void PaintFace(Face newFace)
-        {
-            Debug.Log($"Updating material {newFace.ElementId} {newFace.FaceIndex} {newFace.MaterialId}");
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-            {
-                Type = "PAINT",
-                Data = JsonConvert.SerializeObject(newFace)
-            }, 5000);
-            Debug.Log(JsonConvert.SerializeObject(response));
         }
 
         private List<JObject> LoadType(string type, string name)

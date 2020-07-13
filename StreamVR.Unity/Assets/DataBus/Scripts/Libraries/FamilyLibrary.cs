@@ -17,10 +17,14 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using LMAStudio.StreamVR.Common.Models;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace LMAStudio.StreamVR.Unity.Logic
 {
@@ -67,6 +71,36 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 }
             }
             return null;
+        }
+
+        public static IEnumerator ResolveFamilyOBJ(string id)
+        {
+            Family fam = GetFamily(id);
+            if (fam == null)
+            {
+                Debug.Log($"FAMILY {id} DOES NOT EXIST");
+                yield return null;
+                yield break;
+            }
+
+            Debug.Log(fam.URL);
+            using (var webRequest = new UnityWebRequest(fam.URL))
+            {
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+                // Request and wait for the desired page.
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.isNetworkError)
+                {
+                    Debug.Log("Error: " + webRequest.error);
+                    yield return null;
+                }
+                else
+                {
+                    yield return webRequest.downloadHandler.data;
+                }
+            }
         }
     }
 }

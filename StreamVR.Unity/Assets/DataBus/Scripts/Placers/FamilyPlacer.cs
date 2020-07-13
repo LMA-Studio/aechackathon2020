@@ -31,10 +31,16 @@ namespace LMAStudio.StreamVR.Unity.Logic
     {
         public void Place(List<FamilyInstance> families)
         {
+            System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+            s.Start();
+
             foreach (var f in families)
             {
                 this.Place(f);
             }
+
+            Debug.Log($"OBJ import time: {s.ElapsedMilliseconds}ms");
+            s.Stop();
         }
 
         public void Place(FamilyInstance f)
@@ -55,8 +61,8 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 newFamily.transform.Rotate(newFamily.transform.up, 180);
             }
 
-            newFamily.AddComponent<FamilyController>().LoadInstance(f);
             newFamily.transform.parent = this.transform;
+            newFamily.AddComponent<FamilyController>().LoadInstanceAsync(f);
         }
     }
 }

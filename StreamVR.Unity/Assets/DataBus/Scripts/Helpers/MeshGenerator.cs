@@ -77,7 +77,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             newFace.gameObject.AddComponent(typeof(MeshCollider));
 
             MeshRenderer mr = newFace.GetComponent<MeshRenderer>();
-            mr.material = (UnityEngine.Material)UnityEngine.Resources.Load($"Materials/Default/Default");
+            mr.material = (UnityEngine.Material)UnityEngine.Resources.Load($"Default");
 
             if (f.MaterialId != null && f.MaterialId != "-1")
             {
