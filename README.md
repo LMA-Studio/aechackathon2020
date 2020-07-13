@@ -1,4 +1,4 @@
-# AECHackathon2020 Project
+# AEC Hackathon Online 2020 Project
 
 This is a continuation and expansion of exisiting work from a [previous hackathon](https://github.com/LMA-Studio/enghackathon2020)
 
@@ -9,15 +9,16 @@ Below you will find details pertaining to the building and running of the RevitA
 ### Building
 
 - Addin project targets `.NET 4.7.2`
-- UtilityStandard builds against `.NETStandard 2.0`
+- StreamVR.Common builds against `.NETStandard 2.0`
 
 ### Dependencies
 
-- Newtonsoft.Json [12.0.3]
+- Newtonsoft.Json [2.0.1]
+  - Needs [JSON .NET For Unity](https://assetstore.unity.com/packages/tools/input-management/json-net-for-unity-11347) due to running on mobile device (Oculus Quest)
 - Revit.RevitAPI.x64 [2019.0.0]
 - Revit.RevitAPIUI.x64 [2019.0.0]
 - [NATS.Client](https://github.com/nats-io/nats.net) [0.10.1]
-    - Build targeting .NET Standard 2.0 can be found in Libs directory
+  - Build targeting .NET Standard 2.0 can be found in Libs directory
 
 ### Running
 
@@ -27,7 +28,7 @@ External NATS service must be running. This is not being shipped with the addin 
 
 A test client is also included that can be easily compiled to issue commands to the Revit application. The default test script is seen below
 
-```
+```csharp
 private static async Task Test(ICommunicator comms)
 {
     // Issue command to get all elements of a given type
