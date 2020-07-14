@@ -56,7 +56,9 @@ namespace LMAStudio.StreamVR.Revit.Commands
             StringBuilder fullObjectSB = new StringBuilder();
             int part = 0;
 
-            fullObjectSB.Append($"o GeometryPart{part}\n");
+            fullObjectSB.Append($"o StreamVRExportedObject\n");
+
+            Dictionary<string, string> materialMapping = new Dictionary<string, string>();
 
             GeometryElement geometry = family.get_Geometry(new Options());
             foreach (GeometryObject obj in geometry)
@@ -67,12 +69,31 @@ namespace LMAStudio.StreamVR.Revit.Commands
                     continue;
                 }
 
-                int faceNum = 0;
+                if (solid.GraphicsStyleId != null)
+                {
+                    GraphicsStyle gs = doc.GetElement(solid.GraphicsStyleId) as GraphicsStyle;
+                    bool isLightSource = gs?.GraphicsStyleCategory?.Name == "Light Source";
+                    if (isLightSource)
+                    {
+                        continue;
+                    }
+                }
+
+                string groupName = $"GeometryPart{part}";
+                bool addedMaterial = false;
+
+                fullObjectSB.Append($"g {groupName}\n");
 
                 IEnumerable<Face> faces = solid.Faces.Cast<Face>();
                 foreach (Face f in faces)
                 {
-                    fullObjectSB.Append($"g GeometryFace{faceNum}\n");
+                    if (!addedMaterial && f.MaterialElementId != null)
+                    {
+                        materialMapping.Add(groupName, f.MaterialElementId.ToString());
+                        addedMaterial = true;
+
+                        fullObjectSB.Append($"svrm {f.MaterialElementId.ToString()}\n");
+                    }
 
                     Mesh m = f.Triangulate();
 
@@ -101,7 +122,6 @@ namespace LMAStudio.StreamVR.Revit.Commands
                             nextIndexOffset = f3;
                         }
                     }
-                    faceNum++;
 
                     indexOffset = nextIndexOffset + 1;
                 }
@@ -125,6 +145,7 @@ namespace LMAStudio.StreamVR.Revit.Commands
                     form.Add(new StringContent(dto.Manufacturer ?? ""), "publisher");
                     form.Add(new StringContent(dto.Description ?? ""), "description");
                     form.Add(new StringContent(dto.Tag ?? ""), "tag");
+                    form.Add(new StringContent(JsonConvert.SerializeObject(materialMapping)), "materials");
                     form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{family.UniqueId}.obj");
 
                     HttpResponseMessage response = httpClient.PostAsync(dto.URL, form).Result;

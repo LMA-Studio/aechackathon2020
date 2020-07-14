@@ -63,8 +63,6 @@ namespace LMAStudio.StreamVR.Revit
 
             this.application = commandData.Application.Application;
 
-            Debug("TEST LOG123");
-
             this.Converter = new GenericConverter(Debug);
             this.Command_GetAll = new GetAll(Debug, this.Converter);
             this.Command_Get = new Get(Debug, this.Converter);
@@ -72,35 +70,6 @@ namespace LMAStudio.StreamVR.Revit
             this.Command_Paint = new Paint(Debug, this.Converter);
             this.Command_Create = new Create(Debug, this.Converter);
             this.Command_Export = new Export(Debug, this.Converter);
-
-
-            //IEnumerable<string> families = new FilteredElementCollector(doc).
-            //    OfClass(typeof(FamilySymbol)).
-            //    Select(e => e.Id.ToString());
-
-            //Debug("Number of families " + families.Count());
-
-            //foreach(string id in families)
-            //{
-            //    try
-            //    {
-            //        Message response = this.Command_Export.Execute(doc, new Message
-            //        {
-            //            Type = "EXPORT",
-            //            Reply = null,
-            //            Data = JsonConvert.SerializeObject(new
-            //            {
-            //                Id = id // "56182"
-            //            })
-            //        });
-
-            //        Debug(response.Data);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Debug($"Error 2 {id} {e.ToString()}");
-            //    }
-            //}
 
             this.ListenForMessages(doc, "192.168.0.119:7002");
 
@@ -143,6 +112,59 @@ namespace LMAStudio.StreamVR.Revit
             }
         }
 
+        private Message ExportAll(Document doc, Message msg)
+        {
+            IEnumerable<string> families = new FilteredElementCollector(doc).
+                            OfClass(typeof(FamilySymbol)).
+                            Select(e => e.Id.ToString());
+
+            int success = 0;
+            int failure = 0;
+
+            Debug("EXPORTING " + families.Count() + " FAMILIES");
+
+            foreach (string id in families)
+            {
+                try
+                {
+                    Message response = this.Command_Export.Execute(doc, new Message
+                    {
+                        Type = "EXPORT",
+                        Reply = null,
+                        Data = JsonConvert.SerializeObject(new
+                        {
+                            Id = id // "56182"
+                        })
+                    });
+
+                    Debug(response.Data);
+                    success++;
+                }
+                catch (Exception e)
+                {
+                    Debug($"Error 2 {id} {e.ToString()}");
+
+                    failure++;
+                }
+            }
+
+            Debug("EXPORT RESULTS " + JsonConvert.SerializeObject(new
+            {
+                Successes = success,
+                Failures = failure
+            }));
+
+            return new Message
+            {
+                Type = "EXPORT_RESULTS",
+                Data = JsonConvert.SerializeObject(new
+                {
+                    Successes = success,
+                    Failures = failure
+                })
+            };
+        }
+
         private Message HandleClientRequest(Document doc, Message msg)
         {
             try
@@ -159,6 +181,10 @@ namespace LMAStudio.StreamVR.Revit
                         return this.Command_Paint.Execute(doc, msg);
                     case "CREATE":
                         return this.Command_Create.Execute(doc, msg);
+                    case "EXPORT":
+                        return this.Command_Export.Execute(doc, msg);
+                    case "EXPORT_ALL":
+                        return ExportAll(doc, msg);
                 }
             }
             catch(Exception e)

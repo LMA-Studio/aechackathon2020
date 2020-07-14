@@ -19,6 +19,7 @@ module.exports = function(req, res) {
       tag: req.body.tag,
       description: req.body.description,
       publisher: req.body.publisher,
+      materials: JSON.parse(req.body.materials || "{}"),
       date: new Date().toISOString()
     })
   ))
