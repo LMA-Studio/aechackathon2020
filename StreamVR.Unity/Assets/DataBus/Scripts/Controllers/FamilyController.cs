@@ -123,7 +123,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             {
                 byte[] objData = cd.result as byte[];
 
-                Debug.Log("PLACING FAMILY");
+                // Debug.Log("PLACING FAMILY");
 
                 GameObject modelInstance;
                 using (var textStream = new MemoryStream(objData))

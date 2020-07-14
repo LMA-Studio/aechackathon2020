@@ -105,6 +105,15 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             comms.Connect();
             comms.Publish(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
         }
+
+        [MenuItem("StreamVR/Export all")]
+        public static void ExportAll()
+        {
+            var comms = new Communicator("192.168.0.119:7002", Debug.Log);
+            comms.Connect();
+            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL" }, 30000);
+            Debug.Log(response);
+        }
 #endif
         public void LoadAll()
         {

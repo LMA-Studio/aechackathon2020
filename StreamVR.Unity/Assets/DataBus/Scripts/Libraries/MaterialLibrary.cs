@@ -26,12 +26,34 @@ namespace LMAStudio.StreamVR.Unity.Logic
     public static class MaterialLibrary
     {
         private static Dictionary<string, Material> lib = new Dictionary<string, Material>();
+        private static Dictionary<string, UnityEngine.Material> matLib = new Dictionary<string, UnityEngine.Material>();
 
         public static void LoadMaterials(List<Material> materials)
         {
             lib = materials.ToDictionary(
                 kv => kv.Id,
                 kv => kv
+            );
+
+            matLib = materials.ToDictionary(
+                kv => kv.Id,
+                kv =>
+                {
+                    var mat = new UnityEngine.Material(UnityEngine.Shader.Find("Universal Render Pipeline/Lit"));
+                    mat.name = kv.Name;
+                    mat.color = new UnityEngine.Color(
+                        kv.Color.Red / 255f,
+                        kv.Color.Green / 255f,
+                        kv.Color.Blue / 255f,
+                        (100 - kv.Transparency) / 100f
+                    );
+                    if (kv.Transparency > 0)
+                    {
+                        mat.SetFloat("_Surface", 1);
+                        mat.SetFloat("_Blend", 0);
+                    }
+                    return mat;
+                }
             );
         }
 
@@ -66,12 +88,15 @@ namespace LMAStudio.StreamVR.Unity.Logic
 
         public static UnityEngine.Material LookupMaterial(string id)
         {
-            var mat = MaterialLibrary.GetMaterial(id);
-            if (mat == null)
+            if (id == null)
             {
                 return null;
             }
-            return (UnityEngine.Material)UnityEngine.Resources.Load($"Materials/{mat.Name}/{mat.Name}");
+            if (!matLib.ContainsKey(id))
+            {
+                return null;
+            }
+            return matLib[id];
         }
 
         public static UnityEngine.Material ReverseLookupMaterial(string name)

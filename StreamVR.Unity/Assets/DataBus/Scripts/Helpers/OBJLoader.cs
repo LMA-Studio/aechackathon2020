@@ -78,12 +78,12 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             List<int> uvIndices = new List<int>();
 
             //helper func
-            Action<string> setCurrentObjectFunc = (string objectName) =>
+            Action<string> setCurrentObjectFunc = (string n) =>
             {
-                if (!builderDict.TryGetValue(objectName, out currentBuilder))
+                if (!builderDict.TryGetValue(n, out currentBuilder))
                 {
-                    currentBuilder = new OBJObjectBuilder(objectName, this);
-                    builderDict[objectName] = currentBuilder;
+                    currentBuilder = new OBJObjectBuilder(n, this);
+                    builderDict[n] = currentBuilder;
                 }
             };
 
@@ -92,6 +92,8 @@ namespace LMAStudio.StreamVR.Unity.Helpers
 
             //var buffer = new DoubleBuffer(reader, 256 * 1024);
             var buffer = new CharWordReader(reader, 4 * 1024);
+            string objectName = null;
+            string materialId = null;
 
             //do the reading
             while (true)
@@ -132,12 +134,26 @@ namespace LMAStudio.StreamVR.Unity.Helpers
                     continue;
                 }
 
+                // stream-vr material id
+                if (buffer.Is("svrm"))
+                {
+                    buffer.ReadUntilNewLine();
+                    materialId = buffer.GetString(1);
+                    continue;
+                }
+
                 //new object
                 if ((buffer.Is("o") || buffer.Is("g")))
                 {
                     buffer.ReadUntilNewLine();
-                    string objectName = buffer.GetString(1);
-                    setCurrentObjectFunc.Invoke(objectName);
+                    string groupingName = buffer.GetString(1);
+                    setCurrentObjectFunc.Invoke(groupingName);
+
+                    if (buffer.Is("o"))
+                    {
+                        objectName = groupingName;
+                    }
+
                     continue;
                 }
 
@@ -204,7 +220,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
                     uvIndices.Reverse();
 
                     //push to builder
-                    currentBuilder.PushFace(vertexIndices, normalIndices, uvIndices);
+                    currentBuilder.PushFace(vertexIndices, normalIndices, uvIndices, materialId);
 
                     //clear lists
                     vertexIndices.Clear();
@@ -218,7 +234,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             }
 
             //finally, put it all together
-            GameObject obj = new GameObject(_objInfo != null ? Path.GetFileNameWithoutExtension(_objInfo.Name) : "WavefrontObject");
+            GameObject obj = new GameObject(_objInfo != null ? Path.GetFileNameWithoutExtension(_objInfo.Name) : objectName ?? "CustomObject");
             obj.transform.localScale = new Vector3(-1f, 1f, 1f);
 
             foreach (var builder in builderDict)

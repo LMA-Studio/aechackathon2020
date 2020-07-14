@@ -65,20 +65,11 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             Material[] materialArray = new Material[_materialIndices.Count];
             foreach (var kvp in _materialIndices)
             {
-                Material material = null;
-                if (_loader.Materials == null)
+                Material material = Logic.MaterialLibrary.LookupMaterial(kvp.Key);
+                if (material == null)
                 {
                     material = CreateNullMaterial();
                     material.name = kvp.Key;
-                }
-                else
-                {
-                    if (!_loader.Materials.TryGetValue(kvp.Key, out material))
-                    {
-                        material = CreateNullMaterial();
-                        material.name = kvp.Key;
-                        _loader.Materials[kvp.Key] = material;
-                    }
                 }
                 materialArray[submesh] = material;
                 submesh++;
@@ -129,7 +120,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             }
         }
 
-        public void PushFace(List<int> vertexIndices, List<int> normalIndices, List<int> uvIndices)
+        public void PushFace(List<int> vertexIndices, List<int> normalIndices, List<int> uvIndices, string materialId)
         {
             //invalid face size?
             if (vertexIndices.Count < 3)
@@ -140,8 +131,8 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             //set material
             if (_lastMaterial == null)
             {
-                SetMaterial("default");
-                _lastMaterial = "default";
+                SetMaterial(materialId);
+                _lastMaterial = materialId;
             }
 
             //remap
