@@ -697,6 +697,12 @@ PrefabInstance:
       propertyPath: m_text
       value: MATERIAL SELECTION
       objectReference: {fileID: 0}
+    - target: {fileID: 6653865399141955071, guid: 0ed22b31d533c9b428b5c4582d332122,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 3990494012231319482, guid: 963e5bc3b9a373140aa02e198bf2ae60,
+        type: 2}
     - target: {fileID: 7314402418140161421, guid: 0ed22b31d533c9b428b5c4582d332122,
         type: 3}
       propertyPath: m_Name
@@ -1187,7 +1193,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &402832864
 Transform:
   m_ObjectHideFlags: 0
@@ -1857,6 +1863,12 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 442141097219783721, guid: 9fd6a0a5205d1634cb7469c80bde2d5b,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -1236976089014459800, guid: c2b34aa9476c2894e811c79dea4f628c,
+        type: 2}
     - target: {fileID: 4164700505998489526, guid: 9fd6a0a5205d1634cb7469c80bde2d5b,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2435,6 +2447,12 @@ PrefabInstance:
       propertyPath: m_textInfo.spaceCount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7932111678525977717, guid: b034273de528ac847a404dca8c57f4f6,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 3990494012231319482, guid: 963e5bc3b9a373140aa02e198bf2ae60,
+        type: 2}
     - target: {fileID: 7932111679006256004, guid: b034273de528ac847a404dca8c57f4f6,
         type: 3}
       propertyPath: m_Name
@@ -3772,6 +3790,12 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 442141097219783721, guid: 9fd6a0a5205d1634cb7469c80bde2d5b,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -1236976089014459800, guid: c2b34aa9476c2894e811c79dea4f628c,
+        type: 2}
     - target: {fileID: 4164700505998489526, guid: 9fd6a0a5205d1634cb7469c80bde2d5b,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -6069,6 +6093,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1813015525}
     m_Modifications:
+    - target: {fileID: 442141097219783721, guid: 9fd6a0a5205d1634cb7469c80bde2d5b,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -1236976089014459800, guid: c2b34aa9476c2894e811c79dea4f628c,
+        type: 2}
     - target: {fileID: 4164700505998489526, guid: 9fd6a0a5205d1634cb7469c80bde2d5b,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -9986,6 +10016,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6653865399141955071, guid: 0ed22b31d533c9b428b5c4582d332122,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 3990494012231319482, guid: 963e5bc3b9a373140aa02e198bf2ae60,
+        type: 2}
+    - target: {fileID: 6653865399141955071, guid: 0ed22b31d533c9b428b5c4582d332122,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7314402418140161421, guid: 0ed22b31d533c9b428b5c4582d332122,
         type: 3}
       propertyPath: m_Name
@@ -10723,6 +10764,12 @@ PrefabInstance:
       propertyPath: m_textInfo.spaceCount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7932111678525977717, guid: b034273de528ac847a404dca8c57f4f6,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 3990494012231319482, guid: 963e5bc3b9a373140aa02e198bf2ae60,
+        type: 2}
     - target: {fileID: 7932111679006256004, guid: b034273de528ac847a404dca8c57f4f6,
         type: 3}
       propertyPath: m_Name
