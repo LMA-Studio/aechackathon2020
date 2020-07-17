@@ -29,6 +29,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
     public class OBJLoader
     {
         //global lists, accessed by objobjectbuilder
+        internal List<Vector3> Lights = new List<Vector3>();
         internal List<Vector3> Vertices = new List<Vector3>();
         internal List<Vector3> Normals = new List<Vector3>();
         internal List<Vector2> UVs = new List<Vector2>();
@@ -111,6 +112,12 @@ namespace LMAStudio.StreamVR.Unity.Helpers
                 if (buffer.Is("#"))
                 {
                     buffer.SkipUntilNewLine();
+                    continue;
+                }
+
+                if (buffer.Is("ls"))
+                {
+                    Lights.Add(buffer.ReadVector());
                     continue;
                 }
 
@@ -245,6 +252,24 @@ namespace LMAStudio.StreamVR.Unity.Helpers
 
                 var builtObj = builder.Value.Build();
                 builtObj.transform.SetParent(obj.transform, false);
+            }
+
+            foreach(Vector3 light in Lights)
+            {
+                GameObject lightObject = new GameObject("LightSource");
+
+                Light l = lightObject.AddComponent<Light>();
+                l.type = LightType.Spot;
+                l.range = 10;
+                l.spotAngle = 90;
+                l.innerSpotAngle = 60;
+                l.intensity = 3;
+                l.shadows = LightShadows.Soft;
+
+                lightObject.transform.position = light;
+                lightObject.transform.SetParent(obj.transform, false);
+                lightObject.transform.rotation = Quaternion.LookRotation(Vector3.down);
+                lightObject.transform.position += new Vector3(0, 0.01f, 0);
             }
 
             return obj;

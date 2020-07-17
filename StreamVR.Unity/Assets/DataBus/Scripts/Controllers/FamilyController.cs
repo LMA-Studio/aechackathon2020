@@ -32,6 +32,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
     public class FamilyController : MonoBehaviour
     {
         public string CreatedFromFamilyId;
+        public string InstanceData = "";
 
         private StreamVRController streamAPI;
 
@@ -94,13 +95,13 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             CreatedFromFamilyId = null;
 
             Matrix4x4 rotM = f.Transform.GetRotation();
-            Matrix4x4 rotMI = rotM.inverse;
+            //Matrix4x4 rotMI = rotM.inverse;
 
-            Vector3 bbMin = new Vector3((float)f.BoundingBoxMin.X, (float)f.BoundingBoxMin.Y, (float)f.BoundingBoxMin.Z);
-            Vector3 bbMax = new Vector3((float)f.BoundingBoxMax.X, (float)f.BoundingBoxMax.Y, (float)f.BoundingBoxMax.Z);
+            //Vector3 bbMin = new Vector3((float)f.BoundingBoxMin.X, (float)f.BoundingBoxMin.Y, (float)f.BoundingBoxMin.Z);
+            //Vector3 bbMax = new Vector3((float)f.BoundingBoxMax.X, (float)f.BoundingBoxMax.Y, (float)f.BoundingBoxMax.Z);
 
-            Vector3 bbMinRot = rotMI.MultiplyPoint(bbMin);
-            Vector3 bbMaxRot = rotMI.MultiplyPoint(bbMax);
+            //Vector3 bbMinRot = rotMI.MultiplyPoint(bbMin);
+            //Vector3 bbMaxRot = rotMI.MultiplyPoint(bbMax);
 
             //this.transform.localScale = new Vector3(
             //    bbMax.x - bbMin.x,
@@ -112,10 +113,11 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
             this.name = $"Family ({f.Id})";
             this.instanceData = f;
+            this.InstanceData = Newtonsoft.Json.JsonConvert.SerializeObject(f);
             this.fam = FamilyLibrary.GetFamily(f.FamilyId);
 
             // GameObject model = (GameObject)Resources.Load($"Families/{this.fam.Name}/model");
-            CoroutineWithData cd = new CoroutineWithData(this, FamilyLibrary.ResolveFamilyOBJ(f.FamilyId));
+            CoroutineWithData cd = new CoroutineWithData(this, FamilyLibrary.ResolveFamilyOBJ(f.FamilyId, f.VariantId));
             yield return cd.coroutine;
             object result = cd.result;
 
@@ -137,6 +139,11 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 modelInstance.transform.localPosition = Vector3.zero;
                 modelInstance.transform.localRotation = initialRotation;
                 modelInstance.transform.localScale = new Vector3(0.3048f, 0.3048f, 0.3048f);
+
+                foreach(var l in modelInstance.GetComponentsInChildren<Light>())
+                {
+                    l.gameObject.transform.rotation = Quaternion.LookRotation(Vector3.down);
+                }
 
                 //Debug.Log("Parent " + this.gameObject.name);
                 //Debug.Log("Child " + modelInstance.gameObject.name);

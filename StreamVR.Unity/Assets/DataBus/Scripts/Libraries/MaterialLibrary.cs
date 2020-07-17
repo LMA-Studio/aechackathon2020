@@ -51,6 +51,13 @@ namespace LMAStudio.StreamVR.Unity.Logic
                     {
                         mat.SetFloat("_Surface", 1);
                         mat.SetFloat("_Blend", 0);
+                        mat.SetOverrideTag("RenderType", "Transparent");
+                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        mat.SetInt("_ZWrite", 0);
+                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        mat.SetShaderPassEnabled("ShadowCaster", false);
                     }
                     return mat;
                 }

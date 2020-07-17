@@ -73,7 +73,7 @@ namespace LMAStudio.StreamVR.Unity.Logic
             return null;
         }
 
-        public static IEnumerator ResolveFamilyOBJ(string id)
+        public static IEnumerator ResolveFamilyOBJ(string id, string variantId)
         {
             Family fam = GetFamily(id);
             if (fam == null)
@@ -83,8 +83,10 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 yield break;
             }
 
-            Debug.Log(fam.URL);
-            using (var webRequest = new UnityWebRequest(fam.URL))
+            string url = $"http://192.168.0.119:5000/api/model/{fam.FamilyId}?v={variantId ?? ""}";
+
+            Debug.Log(url);
+            using (var webRequest = new UnityWebRequest(url))
             {
                 webRequest.downloadHandler = new DownloadHandlerBuffer();
 

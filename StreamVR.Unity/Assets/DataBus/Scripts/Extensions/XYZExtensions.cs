@@ -43,27 +43,74 @@ namespace LMAStudio.StreamVR.Unity.Extensions
             return m;
         }
 
-        public static Matrix4x4 GetRotation(this Common.Models.Transform t)
+        public static Matrix4x4 GetRotation(this Common.Models.Transform t, bool flipped = false)
         {
             XYZ bx = t.BasisX;
             XYZ by = t.BasisY;
             XYZ bz = t.BasisZ;
 
-            float angle = 180 - Mathf.Atan2((float)t.BasisX.Y, (float)t.BasisX.X) * 180 / Mathf.PI + 180;
+            // float angle = 180 - Mathf.Atan2((float)t.BasisX.Y, (float)t.BasisX.X) * 180 / Mathf.PI + 180;
 
-            Matrix4x4 m = Matrix4x4.Rotate(Quaternion.AngleAxis(angle, Vector3.up));
+            // Matrix4x4 m = Matrix4x4.Rotate(Quaternion.AngleAxis(angle, Vector3.up));
+            Matrix4x4 m = new Matrix4x4();
 
-            //m[0, 0] = (float)bx.X;
-            //m[0, 1] = (float)bx.Z;
-            //m[0, 2] = (float)bx.Y;
+            // m[0, 0] = (float)bx.X;
+            // m[0, 1] = (float)bx.Y;
+            // m[0, 2] = (float)bx.Z;
 
-            //m[1, 0] = (float)bz.X;
-            //m[1, 1] = (float)bz.Z;
-            //m[1, 2] = (float)bz.Y;
+            // m[1, 0] = (float)by.X;
+            // m[1, 1] = (float)by.Y;
+            // m[1, 2] = (float)by.Z;
 
-            //m[2, 0] = (float)by.X;
-            //m[2, 1] = (float)by.Z;
-            //m[2, 2] = (float)by.Y;
+            // m[2, 0] = (float)bz.X;
+            // m[2, 1] = (float)bz.Y;
+            // m[2, 2] = (float)bz.Z;
+
+            m[0, 0] = (float)bx.X;
+            m[0, 1] = -(float)bx.Z;
+            m[0, 2] = -(float)bx.Y;
+
+            m[1, 0] = -(float)bz.X;
+            m[1, 1] = (float)bz.Z;
+            m[1, 2] = -(float)bz.Y;
+
+            m[2, 0] = -(float)by.X;
+            m[2, 1] = -(float)by.Z;
+            m[2, 2] = (float)by.Y;
+
+            // if (flipped)
+            // {
+            //     m[0, 1] = -m[0, 1];
+            //     m[0, 2] = -m[0, 2];
+            //     m[1, 0] = -m[1, 0];
+            //     m[1, 2] = -m[1, 2];
+            //     m[2, 0] = -m[2, 0];
+            //     m[2, 1] = -m[2, 1];
+            // }
+            
+
+            return m;
+        }
+
+        public static Matrix4x4 GetRotationRH(this Common.Models.Transform t)
+        {
+            XYZ bx = t.BasisX;
+            XYZ by = t.BasisY;
+            XYZ bz = t.BasisZ;
+
+            Matrix4x4 m = new Matrix4x4();
+
+            m[0, 0] = (float)bx.X;
+            m[0, 1] = (float)bx.Y;
+            m[0, 2] = (float)bx.Z;
+
+            m[1, 0] = (float)by.X;
+            m[1, 1] = (float)by.Y;
+            m[1, 2] = (float)by.Z;
+
+            m[2, 0] = (float)bz.X;
+            m[2, 1] = (float)bz.Y;
+            m[2, 2] = (float)bz.Z;
 
             return m;
         }
