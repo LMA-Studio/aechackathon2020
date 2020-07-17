@@ -50,17 +50,90 @@ namespace LMAStudio.StreamVR.Revit.Commands
 
             FamilySymbol family = doc.GetElement(new ElementId(Int32.Parse(elementId))) as FamilySymbol;
 
+            GeometryElement geometry = family.get_Geometry(new Options());
+            byte[] file_bytes = GeometryToOBJ(doc, geometry);
+
+            try
+            {
+                System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+                s.Start();
+
+                List<Task> uploadTasks = new List<Task>();
+
+                LMAStudio.StreamVR.Common.Models.Family dto = _converter.ConvertToDTO(family).ToObject<LMAStudio.StreamVR.Common.Models.Family>();
+
+                uploadTasks.Add(Task.Run(() => UploadOBJ(dto, file_bytes)));
+
+                IEnumerable<FamilyInstance> instances = new FilteredElementCollector(doc).
+                    OfClass(typeof(FamilyInstance)).
+                    Select(f => f as FamilyInstance).
+                    Where(f => f.Symbol.Id == family.Id);
+
+                // Get all different variants
+                Dictionary<int, FamilyInstance> variants = new Dictionary<int, FamilyInstance>();
+                foreach (var f in instances)
+                {
+                    var info = f.GetOrderedParameters().Where(p => p.Definition.ParameterGroup == BuiltInParameterGroup.PG_GEOMETRY);
+                    Dictionary<string, string> infoDict = new Dictionary<string, string>();
+                    foreach(var i in info)
+                    {
+                        infoDict[i.Definition.Name] = i.AsValueString();
+                    }
+                    int hash = JsonConvert.SerializeObject(infoDict).GetHashCode();
+                    variants[hash] = f;
+                }
+
+                _log($"{family.Name} has {instances.Count()} varaints");
+
+                // Upload each distinct variant
+                foreach (var kv in variants)
+                {
+                    GeometryElement variantGeometry = kv.Value.get_Geometry(new Options());
+                    GeometryInstance variantInstance = variantGeometry.Where(
+                        g => (g as Solid) == null || (g as Solid).Faces.Size == 0
+                    ).FirstOrDefault() as GeometryInstance;
+                    if (variantInstance == null)
+                    {
+                        _log($"INSTANCE GEOMETRY NULL FOR: {kv.Value.Name}");
+                        continue;
+                    }
+                    GeometryElement variantInstanceGeometry = variantInstance.GetSymbolGeometry();
+                    byte[] variantFileBytes = GeometryToOBJ(doc, variantInstanceGeometry);
+                    uploadTasks.Add(Task.Run(() => UploadOBJVariant(dto.FamilyId, kv.Key.ToString(), variantFileBytes)));
+                }
+
+                Task.WaitAll(uploadTasks.ToArray());
+
+                _log($"Upload time for {instances.Count() + 1} models: {s.ElapsedMilliseconds}ms");
+                s.Stop();
+
+                return new Message
+                {
+                    Type = "OBJ",
+                    Data = dto.FamilyId
+                };
+            }
+            catch (Exception e)
+            {
+
+                return new Message
+                {
+                    Type = "ERROR",
+                    Data = $"Error: {family.Name} ({family.Id}) {e.ToString()}"
+                };
+            }
+        }
+
+        private byte[] GeometryToOBJ(Document doc, GeometryElement geometry)
+        {
             int indexOffset = 0;
             int nextIndexOffset = 0;
+            int part = 0;
 
             StringBuilder fullObjectSB = new StringBuilder();
-            int part = 0;
 
             fullObjectSB.Append($"o StreamVRExportedObject\n");
 
-            Dictionary<string, string> materialMapping = new Dictionary<string, string>();
-
-            GeometryElement geometry = family.get_Geometry(new Options());
             foreach (GeometryObject obj in geometry)
             {
                 Solid solid = obj as Solid;
@@ -75,24 +148,24 @@ namespace LMAStudio.StreamVR.Revit.Commands
                     bool isLightSource = gs?.GraphicsStyleCategory?.Name == "Light Source";
                     if (isLightSource)
                     {
+                        XYZ centroid = solid.GetBoundingBox().Transform.Origin;
+                        fullObjectSB.Append($"ls {centroid.X} {centroid.Z} {centroid.Y}\n");
                         continue;
                     }
                 }
 
-                string groupName = $"GeometryPart{part}";
+
+                fullObjectSB.Append($"g GeometryPart{part}\n");
+
+
                 bool addedMaterial = false;
-
-                fullObjectSB.Append($"g {groupName}\n");
-
                 IEnumerable<Face> faces = solid.Faces.Cast<Face>();
                 foreach (Face f in faces)
                 {
                     if (!addedMaterial && f.MaterialElementId != null)
                     {
-                        materialMapping.Add(groupName, f.MaterialElementId.ToString());
-                        addedMaterial = true;
-
                         fullObjectSB.Append($"svrm {f.MaterialElementId.ToString()}\n");
+                        addedMaterial = true;
                     }
 
                     Mesh m = f.Triangulate();
@@ -128,47 +201,49 @@ namespace LMAStudio.StreamVR.Revit.Commands
 
                 part++;
             }
-            
+
             byte[] file_bytes = Encoding.ASCII.GetBytes(fullObjectSB.ToString());
 
-            try
+            return file_bytes;
+        }
+
+        private void UploadOBJ(LMAStudio.StreamVR.Common.Models.Family dto, byte[] file_bytes)
+        {
+            using (HttpClient httpClient = new HttpClient())
             {
-                var dto = _converter.ConvertToDTO(family).ToObject<LMAStudio.StreamVR.Common.Models.Family>();
+                MultipartFormDataContent form = new MultipartFormDataContent();
 
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    MultipartFormDataContent form = new MultipartFormDataContent();
+                form.Add(new StringContent(dto.Name ?? ""), "symbolName");
+                form.Add(new StringContent(dto.FamilyName ?? ""), "familyName");
+                form.Add(new StringContent(dto.ModelName ?? ""), "modelName");
+                form.Add(new StringContent(dto.Manufacturer ?? ""), "publisher");
+                form.Add(new StringContent(dto.Description ?? ""), "description");
+                form.Add(new StringContent(dto.Tag ?? ""), "tag");
+                form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{dto.FamilyId}.obj");
 
-                    form.Add(new StringContent(dto.Name ?? ""), "symbolName");
-                    form.Add(new StringContent(dto.FamilyName ?? ""), "familyName");
-                    form.Add(new StringContent(dto.ModelName ?? ""), "modelName");
-                    form.Add(new StringContent(dto.Manufacturer ?? ""), "publisher");
-                    form.Add(new StringContent(dto.Description ?? ""), "description");
-                    form.Add(new StringContent(dto.Tag ?? ""), "tag");
-                    form.Add(new StringContent(JsonConvert.SerializeObject(materialMapping)), "materials");
-                    form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{family.UniqueId}.obj");
+                string url = $"http://192.168.0.119:5000/api/model/{dto.FamilyId}";
+                HttpResponseMessage response = httpClient.PostAsync(url, form).Result;
 
-                    HttpResponseMessage response = httpClient.PostAsync(dto.URL, form).Result;
+                response.EnsureSuccessStatusCode();
 
-                    response.EnsureSuccessStatusCode();
-
-                    string sd = response.Content.ReadAsStringAsync().Result;
-                }
-
-                return new Message
-                {
-                    Type = "OBJ",
-                    Data = dto.URL
-                };
+                string sd = response.Content.ReadAsStringAsync().Result;
             }
-            catch (Exception e)
-            {
+        }
 
-                return new Message
-                {
-                    Type = "ERROR",
-                    Data = $"Error: {family.Name} ({family.Id}) {e.ToString()}"
-                };
+        private void UploadOBJVariant(string familyId, string varaintId, byte[] file_bytes)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                MultipartFormDataContent form = new MultipartFormDataContent();
+
+                form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{varaintId}.obj");
+
+                string url = $"http://192.168.0.119:5000/api/model/{familyId}?v={varaintId ?? ""}";
+                HttpResponseMessage response = httpClient.PostAsync(url, form).Result;
+
+                response.EnsureSuccessStatusCode();
+
+                string sd = response.Content.ReadAsStringAsync().Result;
             }
         }
     }

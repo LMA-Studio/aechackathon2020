@@ -25,6 +25,7 @@ using Autodesk.Revit.DB;
 using Newtonsoft.Json.Linq;
 using LMAStudio.StreamVR.Common.Models;
 using Autodesk.Revit.DB.Structure;
+using Newtonsoft.Json;
 
 namespace LMAStudio.StreamVR.Revit.Conversions
 {
@@ -37,12 +38,21 @@ namespace LMAStudio.StreamVR.Revit.Conversions
             BoundingBoxXYZ bb = source.get_BoundingBox(null);
             Autodesk.Revit.DB.Transform trans = source.GetTransform();
 
+            var info = source.GetOrderedParameters().Where(p => p.Definition.ParameterGroup == BuiltInParameterGroup.PG_GEOMETRY);
+            Dictionary<string, string> infoDict = new Dictionary<string, string>();
+            foreach (var i in info)
+            {
+                infoDict[i.Definition.Name] = i.AsValueString();
+            }
+            int geometryHash = JsonConvert.SerializeObject(infoDict).GetHashCode();
+
             LMAStudio.StreamVR.Common.Models.FamilyInstance dest = new LMAStudio.StreamVR.Common.Models.FamilyInstance
             {
                 Id = source.Id.ToString(),
                 Name = source.Name,
                 HostId = source.Host?.Id.ToString(),
                 FamilyId = fam.Id.ToString(),
+                VariantId = geometryHash.ToString(),
                 BoundingBoxMin = new LMAStudio.StreamVR.Common.Models.XYZ
                 {
                     X = bb?.Min.X ?? 0,
@@ -56,6 +66,19 @@ namespace LMAStudio.StreamVR.Revit.Conversions
                     Z = bb?.Max.Z ?? 0,
                 },
                 IsFlipped = source.FacingFlipped,
+                FacingOrientation = new LMAStudio.StreamVR.Common.Models.XYZ
+                {
+                    X = source.FacingOrientation.X,
+                    Y = source.FacingOrientation.Y,
+                    Z = source.FacingOrientation.Z,
+                },
+                IsHandFlipped = source.HandFlipped,
+                HandOrientation = new LMAStudio.StreamVR.Common.Models.XYZ
+                {
+                    X = source.HandOrientation.X,
+                    Y = source.HandOrientation.Y,
+                    Z = source.HandOrientation.Z,
+                },
                 Transform = new LMAStudio.StreamVR.Common.Models.Transform
                 {
                     Scale = trans.Scale,

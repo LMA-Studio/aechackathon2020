@@ -40,7 +40,7 @@ namespace LMAStudio.StreamVR.Revit.Conversions
                 Manufacturer = source.GetParameters("Manufacturer name").FirstOrDefault()?.AsString(),
                 Description = source.get_Parameter(BuiltInParameter.ALL_MODEL_DESCRIPTION)?.AsValueString(),
                 Tag = source.get_Parameter(BuiltInParameter.ELEM_CATEGORY_PARAM)?.AsValueString(),
-                URL = $"http://192.168.0.119:5000/api/model/{source.UniqueId}"
+                FamilyId = source.UniqueId
             };
 
             return JObject.FromObject(dest);
