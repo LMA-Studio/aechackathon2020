@@ -29,31 +29,71 @@ function loadModel(modelName)
   scene.add( light );
   
   // ground
-  var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 200, 200 ), new THREE.MeshPhongMaterial( { color: 0x404040, depthWrite: false } ) );
+  var mesh = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry( 200, 200 ),
+    new THREE.MeshPhongMaterial({ color: 0x404040, depthWrite: false })
+  );
   mesh.rotation.x = - Math.PI / 2;
   mesh.receiveShadow = true;
   scene.add( mesh );
   
-  var grid = new THREE.GridHelper( 10, 10, 0x000000, 0x000000 );
+  var grid = new THREE.GridHelper(10, 10, 0x000000, 0x000000);
   grid.material.opacity = 0.2;
   grid.material.transparent = true;
-  scene.add( grid );
+  scene.add(grid);
   // model
   var loader = new OBJLoader();
   
+  var testMaterial = new THREE.MeshLambertMaterial({color: 0x990000});
+
   loader.load(
     `/api/model/${modelName}`,
     function ( object ) {
       object.traverse(function (child) {
         if (child.isMesh) {
+          console.log(child)
           child.castShadow = true;
           child.receiveShadow = true;
+          child.material = testMaterial;
         }
       });
+
   
       scene.add(object);
     }
   );
+
+  function assignUVs(geometry) {
+
+    geometry.faceVertexUvs[0] = [];
+
+    geometry.faces.forEach(function(face) {
+
+        var components = ['x', 'y', 'z'].sort(function(a, b) {
+            return Math.abs(face.normal[a]) > Math.abs(face.normal[b]);
+        });
+
+        var v1 = geometry.vertices[face.a];
+        var v2 = geometry.vertices[face.b];
+        var v3 = geometry.vertices[face.c];
+
+        geometry.faceVertexUvs[0].push([
+            new THREE.Vector2(v1[components[0]], v1[components[1]]),
+            new THREE.Vector2(v2[components[0]], v2[components[1]]),
+            new THREE.Vector2(v3[components[0]], v3[components[1]])
+        ]);
+
+    });
+
+    geometry.uvsNeedUpdate = true;
+}
+  
+  var cube = new THREE.Mesh(
+    new THREE.BoxGeometry(5, 5, 5),
+    testMaterial
+  );
+  cube.position.set(0, 10, 0);
+  scene.add(cube);
   
   console.log(container.outerWidth)
   const renderer = new THREE.WebGLRenderer( { antialias: true } );

@@ -26,11 +26,17 @@ namespace LMAStudio.StreamVR.Common.Models
     {
         public string HostId { get; set; }
         public string FamilyId { get; set; }
+        public string VariantId { get; set; }
 
         public XYZ BoundingBoxMin { get; set; }
         public XYZ BoundingBoxMax { get; set; }
 
         public bool IsFlipped { get; set; }
+        public XYZ FacingOrientation { get; set; }
+
+        public bool IsHandFlipped { get; set; }
+        public XYZ HandOrientation { get; set; }
+
         public Transform Transform { get; set; }
     }
 }
