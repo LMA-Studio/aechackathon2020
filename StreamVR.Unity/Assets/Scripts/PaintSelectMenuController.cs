@@ -13,7 +13,7 @@ public class PaintSelectMenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.HideMenu(); 
+        // this.HideMenu(); 
     }
 
     // Update is called once per frame

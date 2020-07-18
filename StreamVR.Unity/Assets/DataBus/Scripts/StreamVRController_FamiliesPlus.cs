@@ -100,8 +100,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         {
             try
             {
+                this.LoadMaterials();
                 this.LoadFamilies();
-                this.LoadFamilyInstances();
             }
             catch (Exception e)
             {
@@ -109,18 +109,18 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             }
         }
 
+        public void LoadMaterials()
+        {
+            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Material", "Material");
+            List<Common.Models.Material> materials = dataSet.Select(x => x.ToObject<Common.Models.Material>()).ToList();
+            MaterialLibrary.LoadMaterials(materials);
+        }
+
         public void LoadFamilies()
         {
             List<JObject> dataSet = LoadType("Autodesk.Revit.DB.FamilySymbol", "Family");
             List<Family> families = dataSet.Select(x => x.ToObject<Family>()).ToList();
             FamilyLibrary.LoadFamilies(families);
-        }
-
-        public void LoadFamilyInstances()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.FamilyInstance", "FamilyInstance");
-            List<FamilyInstance> familyInstances = dataSet.Select(x => x.ToObject<FamilyInstance>()).ToList();
-            this.GetComponent<FamilyPlacer>().Place(familyInstances);
         }
 
         private List<JObject> LoadType(string type, string name)

@@ -63,6 +63,11 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 }
             );
         }
+        
+        public static IEnumerable<Material> GetAllMaterials()
+        {
+            return lib.Values;
+        }
 
         public static Material GetMaterial(string id)
         {
