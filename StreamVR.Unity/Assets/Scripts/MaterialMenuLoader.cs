@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using LMAStudio.StreamVR.Unity.Logic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MaterialMenuLoader : MonoBehaviour
 {
     public GameObject MaterialButton;
+    public TMPro.TextMeshProUGUI pageNumberText;
+    public Button previousButton;
+    public Button nextButton;
 
     private bool isLoaded = false;
     private IEnumerable<LMAStudio.StreamVR.Common.Models.Material> allMaterials;
+    private int pageNumber = 0;
+    private int totalPages = 0;
+
+    private readonly int pageSize = 8;
+
 
     // Start is called before the first frame update
     void Start()
@@ -28,14 +37,52 @@ public class MaterialMenuLoader : MonoBehaviour
 
             if (isLoaded)
             {
-                CreateButtons();
+                totalPages = allMaterials.Count() / pageSize;
+                RenderPage();
+            }
+            else 
+            {
+                pageNumberText.text = "LOADING ...";
             }
         }
     }
 
+    private void RenderPage ()
+    {
+        foreach (Transform child in transform)
+        {
+            GameObject.Destroy(child);
+        }
+       
+        if (pageNumber <= 0)
+        {
+            previousButton.interactable = false;
+            pageNumber = 0;
+        }
+
+        else if(pageNumber >= totalPages)
+        {
+            nextButton.interactable = false;
+            pageNumber = totalPages;
+        }
+        else if (!previousButton.interactable || !nextButton.interactable)
+        {
+            nextButton.interactable = true;
+            previousButton.interactable = true;
+        }
+
+        this.CreateButtons();
+        pageNumberText.text = (pageNumber + 1) + "/" + (totalPages + 1);
+    }
+
     private void CreateButtons()
     {
-        var sortedMaterial = allMaterials.OrderBy(m=>m.Name);
+
+        var sortedMaterial = allMaterials.
+            OrderBy(m=>m.Name).
+            Skip(pageNumber * pageSize).
+            Take(pageSize);
+
         int startX = 100;
         int distanceX = 174;
         int startY = -90;
@@ -59,5 +106,17 @@ public class MaterialMenuLoader : MonoBehaviour
 
             Debug.Log("got here " + i);
         }
+    }
+
+    public void NextPage()
+    {
+        pageNumber += 1;
+        RenderPage();
+    }
+
+    public void PreviousPage()
+    {
+        pageNumber -= 1;
+        RenderPage();
     }
 }
