@@ -32,16 +32,9 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
             Debug.Log("Connecting...");
 
-            try
-            {
-                comms.Connect();
-                Debug.Log("Connected");
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e);
-                Debug.Log("Failed to connect. Trying Again Shortly...");
-            }
+            comms.Connect();
+
+            Debug.Log("Connected");
 
             return comms;
         }

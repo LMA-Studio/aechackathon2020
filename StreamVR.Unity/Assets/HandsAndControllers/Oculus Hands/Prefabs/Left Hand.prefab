@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.39215687}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 99b089768bc3cd54499343ba167c4881, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -147,6 +147,7 @@ MonoBehaviour:
   PlaceMenu: {fileID: 3172150077944647701}
   GeneralMenu: {fileID: 3702432394016912081}
   PaletteMenu: {fileID: 3788043790253715357}
+  Wand: {fileID: 0}
 --- !u!114 &2761996508107648911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,8 +405,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5945284797753377917}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.07, y: -0.03, z: -0.07}
-  m_LocalScale: {x: 0.3, y: 0.0026, z: 0.3}
+  m_LocalPosition: {x: -0.0785, y: -0.03, z: -0.07}
+  m_LocalScale: {x: 0.4, y: 0.0007, z: 0.4}
   m_Children: []
   m_Father: {fileID: 4073277718949346422}
   m_RootOrder: 2
@@ -503,6 +504,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 917802909400742802, guid: af1cca110004e1744bc5242fe766f1e6,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6078286593468233757}
+    - target: {fileID: 917802909400742802, guid: af1cca110004e1744bc5242fe766f1e6,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: MasterExit
       objectReference: {fileID: 0}
     - target: {fileID: 3294415440058328268, guid: af1cca110004e1744bc5242fe766f1e6,
         type: 3}
@@ -660,25 +671,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4725943725710794434}
     m_Modifications:
-    - target: {fileID: 1106871690171080704, guid: d212af74730ea44488b59c65248b716c,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 1b5eb836e0456604789b3d70c9b10d48, type: 2}
-    - target: {fileID: 1660395044440105255, guid: d212af74730ea44488b59c65248b716c,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: f0118acb66a66b546b08a826e2d4bf9d, type: 2}
-    - target: {fileID: 2078332698956804408, guid: d212af74730ea44488b59c65248b716c,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 15db4685e526fcd4486b9c174e0a1d0b, type: 2}
     - target: {fileID: 3744965291952683974, guid: d212af74730ea44488b59c65248b716c,
         type: 3}
       propertyPath: m_Name
       value: Menu_RadialPalette
+      objectReference: {fileID: 0}
+    - target: {fileID: 3744965291952683974, guid: d212af74730ea44488b59c65248b716c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3744965291952683975, guid: d212af74730ea44488b59c65248b716c,
         type: 3}
@@ -785,16 +786,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 4846393689631342937, guid: d212af74730ea44488b59c65248b716c,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 70f05852dd5fd2a4b858f60a538fb063, type: 2}
-    - target: {fileID: 6041332510267928018, guid: d212af74730ea44488b59c65248b716c,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: b669abec18db6cf47a239eeb07571f87, type: 2}
     - target: {fileID: 6505179118120993294, guid: d212af74730ea44488b59c65248b716c,
         type: 3}
       propertyPath: m_Radius

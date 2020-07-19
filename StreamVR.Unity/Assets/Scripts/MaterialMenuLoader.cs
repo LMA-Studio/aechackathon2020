@@ -51,7 +51,7 @@ public class MaterialMenuLoader : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            GameObject.Destroy(child);
+            GameObject.Destroy(child.gameObject);
         }
        
         if (pageNumber <= 0)

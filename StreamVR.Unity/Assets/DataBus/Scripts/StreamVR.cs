@@ -74,8 +74,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         {
             this.options = options;
             this.comms = BusConnector.Connect();
-            var view = this.GetStartingOrientation();
-            Debug.Log(JsonConvert.SerializeObject(view));
+            //var view = this.GetStartingOrientation();
+            //Debug.Log(JsonConvert.SerializeObject(view));
         }
 
         #region Loaders

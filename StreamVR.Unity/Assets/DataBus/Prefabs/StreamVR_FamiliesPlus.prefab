@@ -9,8 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1039078416529444573}
-  - component: {fileID: 1357725326057846953}
   - component: {fileID: 5950775738973604579}
+  - component: {fileID: 8187927904939207272}
+  - component: {fileID: 5568639652791242083}
+  - component: {fileID: 6445967226515503078}
+  - component: {fileID: 2392220869067512996}
   m_Layer: 0
   m_Name: StreamVR_FamiliesPlus
   m_TagString: Untagged
@@ -32,20 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1357725326057846953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1039078416529444567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45a1207f673104749817e62af8e8a569, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  natsEndpoint: 192.168.0.119:7002
-  loadingText: {fileID: 0}
 --- !u!114 &5950775738973604579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,3 +47,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18ceb1e322569a49b8485386b80b3e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8187927904939207272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039078416529444567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb5b5d6cf4864e3489af165e7400d818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5568639652791242083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039078416529444567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595afd406f527ac4bb1a72db922c92de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6445967226515503078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039078416529444567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cef5cba20c62045818602e7f554a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2392220869067512996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039078416529444567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 527e8c6332ec61e4d88c6decdc196ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LoadMaterials: 0
+  LoadFamilies: 0
+  LoadWalls: 0
+  LoadFloors: 0
+  LoadCeilings: 0
+  LoadFamilyInstances: 0
+  Character: {fileID: 0}

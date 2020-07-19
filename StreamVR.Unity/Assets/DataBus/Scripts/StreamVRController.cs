@@ -18,11 +18,11 @@
 
 using System;
 
-using UnityEditor;
-
 #if UNITY_EDITOR
-using UnityEngine;
+using UnityEditor;
 #endif
+
+using UnityEngine;
 
 using LMAStudio.StreamVR.Common.Models;
 using LMAStudio.StreamVR.Unity.Logic;
