@@ -26,6 +26,9 @@ namespace LMAStudio.StreamVR.Common
 {
     public interface ICommunicator : IDisposable
     {
+        string TO_SERVER_CHANNEL { get; }
+        string FROM_SERVER_CHANNEL { get; }
+
         void Connect();
         void Publish(string channel, Message msg);
         Task<Message> Request(string channel, Message msg, int timeout = 1000);
@@ -42,21 +45,33 @@ namespace LMAStudio.StreamVR.Common
 
     public class Communicator : ICommunicator
     {
-        public const string TO_SERVER_CHANNEL = "TO_SERVER";
-        public const string FROM_SERVER_CHANNEL = "FROM_SERVER";
+        public string TO_SERVER_CHANNEL => $"{TO_SERVER_CHANNEL_BASE}{roomId}";
+        public string FROM_SERVER_CHANNEL => $"{FROM_SERVER_CHANNEL_BASE}{roomId}";
+
+        private const string TO_SERVER_CHANNEL_BASE = "TO_SERVER";
+        private const string FROM_SERVER_CHANNEL_BASE = "FROM_SERVER";
 
         private Options opts;
         private IConnection connection;
 
         private Action<string> logger;
+        private string username;
+        private string roomcode;
+        private string roomId = "";
 
-        public Communicator(string url, Action<string> logger)
+        public Communicator(string url, string username, string roomcode, Action<string> logger)
         {
             opts = ConnectionFactory.GetDefaultOptions();
             opts.Url = url;
             opts.Timeout = 1000;
 
             this.logger = logger;
+            this.username = username;
+            this.roomcode = roomcode;
+            if (!string.IsNullOrEmpty(username))
+            {
+                this.roomId = "_" + System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(username + "!#!" + roomcode));
+            }
         }
 
         public void Connect()

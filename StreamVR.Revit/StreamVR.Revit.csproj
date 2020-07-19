@@ -65,6 +65,7 @@
     <Compile Include="Conversions\FamilyInstance.cs" />
     <Compile Include="Conversions\Floor.cs" />
     <Compile Include="Conversions\Family.cs" />
+    <Compile Include="Conversions\3DView.cs" />
     <Compile Include="Conversions\Wall.cs" />
     <Compile Include="Conversions\Material.cs" />
     <Compile Include="Helpers\GeometryConversion.cs" />

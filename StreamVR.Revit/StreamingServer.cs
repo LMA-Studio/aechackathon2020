@@ -19,20 +19,18 @@
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
+
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
+using LMAStudio.StreamVR.Common;
 using LMAStudio.StreamVR.Revit.Commands;
 using LMAStudio.StreamVR.Revit.Conversions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
-using LMAStudio.StreamVR.Common;
 
 namespace LMAStudio.StreamVR.Revit
 {
@@ -40,6 +38,11 @@ namespace LMAStudio.StreamVR.Revit
 
     public class StreamingServer : IExternalCommand
     {
+        private string serverUrl;
+        private string userName;
+        private string roomCode;
+        private View3D startingView;
+
         private IGenericConverter Converter;
         private IBaseCommand Command_GetAll;
         private IBaseCommand Command_Get;
@@ -71,17 +74,27 @@ namespace LMAStudio.StreamVR.Revit
             this.Command_Create = new Create(Debug, this.Converter);
             this.Command_Export = new Export(Debug, this.Converter);
 
-            this.ListenForMessages(doc, "192.168.0.119:7002");
+            this.serverUrl = "192.168.0.119:7002";
+            this.userName = this.application.Username;
+            this.roomCode = "123456";
+            this.startingView = GetView3D(doc);
+
+            Debug("SERVER CONN");
+            Debug(serverUrl);
+            Debug(userName);
+            Debug(roomCode);
+
+            this.ListenForMessages(doc);
 
             return Result.Succeeded;
         }
 
-        private void ListenForMessages(Document doc, string natsUrl)
+        private void ListenForMessages(Document doc)
         {
-            using (var cc = new Communicator(natsUrl, this.Debug))
+            using (var cc = new Communicator(this.serverUrl, this.userName, this.roomCode, this.Debug))
             {
                 cc.Connect();
-                cc.Subscribe(Communicator.TO_SERVER_CHANNEL, (Message msg) =>
+                cc.Subscribe(cc.TO_SERVER_CHANNEL, (Message msg) =>
                 {
                     msgQueue.Enqueue(msg);
                 });
@@ -110,6 +123,15 @@ namespace LMAStudio.StreamVR.Revit
                     Task.Delay(200).Wait();
                 }
             }
+        }
+
+        private View3D GetView3D(Document doc)
+        {
+            return new FilteredElementCollector(doc).
+                OfClass(typeof(View3D)).
+                Select(e => e as View3D).
+                Where(e => e.Name == "3D View 3").
+                FirstOrDefault();
         }
 
         private Message ExportAll(Document doc, Message msg)
@@ -185,6 +207,12 @@ namespace LMAStudio.StreamVR.Revit
                         return this.Command_Export.Execute(doc, msg);
                     case "EXPORT_ALL":
                         return ExportAll(doc, msg);
+                    case "GET_ORIENTATION":
+                        return new Message
+                        {
+                            Type = "ORIENTATION",
+                            Data = JsonConvert.SerializeObject(this.Converter.ConvertToDTO(this.startingView))
+                        };
                 }
             }
             catch(Exception e)
