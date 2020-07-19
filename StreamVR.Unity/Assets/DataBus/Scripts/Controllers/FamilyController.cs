@@ -34,32 +34,23 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         public string CreatedFromFamilyId;
         public string InstanceData = "";
 
-        private StreamVRController streamAPI;
-
         private FamilyInstance instanceData = null;
         private Family fam = null;
 
         private void Start()
         {
-            if (this.streamAPI == null)
-            {
-                this.streamAPI = FindObjectOfType<StreamVRController>().GetComponent<StreamVRController>();
-            }
-
             if (this.CreatedFromFamilyId != null)
             {
-                PlaceFamily(CreatedFromFamilyId);
+                PlaceFamily(null, CreatedFromFamilyId);
             }
         }
 
-        public void PlaceFamily(string familyId)
+        public void PlaceFamily(GameObject parent, string familyId)
         {
-            if (this.streamAPI == null)
+            if (parent != null)
             {
-                this.streamAPI = FindObjectOfType<StreamVRController>().GetComponent<StreamVRController>();
+                this.transform.parent = parent.transform;
             }
-
-            this.transform.parent = this.streamAPI.gameObject.transform;
 
             if (FamilyLibrary.GetFamily(familyId) != null)
             {
@@ -76,7 +67,9 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                         }
                     }
                 };
-                newFam = streamAPI.PlaceFamilyInstance(newFam);
+
+                newFam = StreamVR.Instance.PlaceFamilyInstance(newFam);
+
                 this.LoadInstanceAsync(newFam);
             }
             else
@@ -117,7 +110,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             this.fam = FamilyLibrary.GetFamily(f.FamilyId);
 
             // GameObject model = (GameObject)Resources.Load($"Families/{this.fam.Name}/model");
-            CoroutineWithData cd = new CoroutineWithData(this, FamilyLibrary.ResolveFamilyOBJ(f.FamilyId, f.VariantId));
+            CoroutineWithData<object> cd = new CoroutineWithData<object>(this, FamilyLibrary.ResolveFamilyOBJ(f.FamilyId, f.VariantId));
             yield return cd.coroutine;
             object result = cd.result;
 
@@ -231,11 +224,6 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         private void SaveSelf()
         {
-            if (this.streamAPI == null)
-            {
-                this.streamAPI = FindObjectOfType<StreamVRController>().GetComponent<StreamVRController>();
-            }
-
             this.instanceData.Transform.Origin = new XYZ
             {
                 X = this.transform.position.x * Helpers.Constants.FT_PER_M,
@@ -246,7 +234,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             Matrix4x4 rotationMatrix = Matrix4x4.Rotate(this.transform.rotation);
             this.instanceData.Transform.SetRotation(rotationMatrix, this.instanceData.IsFlipped);
 
-            this.streamAPI.SaveFamilyInstance(this.instanceData);
+            StreamVR.Instance.SaveFamilyInstance(this.instanceData);
             // hasUpdate = false;
         }
     }

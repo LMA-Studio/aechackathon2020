@@ -3,11 +3,12 @@ using UnityEngine;
 
 namespace LMAStudio.StreamVR.Unity.Helpers
 {
-    public class CoroutineWithData
+    public class CoroutineWithData<T> where T: class
     {
         public Coroutine coroutine { get; private set; }
-        public object result;
+        public T result;
         private IEnumerator target;
+
         public CoroutineWithData(MonoBehaviour owner, IEnumerator target)
         {
             this.target = target;
@@ -18,7 +19,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
         {
             while (target.MoveNext())
             {
-                result = target.Current;
+                result = target.Current as T;
                 yield return result;
             }
         }

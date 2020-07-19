@@ -17,83 +17,99 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using UnityEditor;
 
+#if UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.UI;
+#endif
 
 using LMAStudio.StreamVR.Common.Models;
 using LMAStudio.StreamVR.Unity.Logic;
 using LMAStudio.StreamVR.Common;
-using System.Collections;
-using UnityEditor;
+using System.Threading.Tasks;
 
 namespace LMAStudio.StreamVR.Unity.Scripts
 {
+    [RequireComponent(typeof(WallPlacer))]
+    [RequireComponent(typeof(FloorPlacer))]
+    [RequireComponent(typeof(CeilingPlacer))]
+    [RequireComponent(typeof(FamilyPlacer))]
     public class StreamVRController : MonoBehaviour
     {
-        public string natsEndpoint = "192.168.0.119:7002";
-        public Text loadingText = null;
+        public bool LoadMaterials = true;
+        public bool LoadFamilies = true;
+        public bool LoadWalls = true;
+        public bool LoadFloors = true;
+        public bool LoadCeilings = true;
+        public bool LoadFamilyInstances = true;
 
-        private ICommunicator comms;
+        public GameObject Character;
 
-        private void Display(string msg)
-        {
-            if (loadingText == null)
-            {
-                Debug.Log(msg);
-            }
-            else
-            {
-                loadingText.text = msg;
-            }
-        }
+        private bool waiting = true;
 
         private void Start()
         {
-            comms = new Communicator(natsEndpoint, Debug.Log);
-            Display("Not Connected");
+            StreamVR.Instance.Connect(new StreamVROptions
+            {
+                LoadMaterials = LoadMaterials,
+                LoadFamilies = LoadFamilies,
+                LoadWalls = LoadWalls,
+                LoadFloors = LoadFloors,
+                LoadCeilings = LoadCeilings,
+                LoadFamilyInstances = LoadFamilyInstances
+            });
 
-            this.TryStartRepeat();
+            View3D so = StreamVR.Instance.GetStartingOrientation();
+            Character.transform.position = new Vector3(
+                (float)so.Position.X * Helpers.Constants.M_PER_FT,
+                (float)so.Position.Z * Helpers.Constants.M_PER_FT,
+                (float)so.Position.Y * Helpers.Constants.M_PER_FT
+            );
+            Character.transform.rotation = Quaternion.LookRotation(
+                new Vector3(
+                    (float)so.ForwardDirection.X,
+                    (float)so.ForwardDirection.Z,
+                    (float)so.ForwardDirection.Y
+                ),
+                new Vector3(
+                    (float)so.UpDirection.X,
+                    (float)so.UpDirection.Z,
+                    (float)so.UpDirection.Y
+                )
+            );
+
+            Task.Run(StreamVR.Instance.LoadAllAsync);
         }
-
-        public void TryStartRepeat()
+        
+        private void Update()
         {
-            StartCoroutine(Connect());
-        }
-
-        private IEnumerator Connect()
-        {
-            Display("Connecting...");
-
-            yield return new WaitForSecondsRealtime(0.2f);
-
-            bool success = false;
-            try
+            if (waiting)
             {
-                comms.Connect();
-                Display("Connected");
+                if (StreamVR.Instance.IsLoaded)
+                {
+                    try
+                    {
+                        System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+                        s.Start();
 
-                success = true;
+                        MaterialLibrary.LoadMaterials(StreamVR.Instance.Materials);
+                        FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
+                        this.GetComponent<WallPlacer>().Place(StreamVR.Instance.Walls);
+                        this.GetComponent<FloorPlacer>().Place(StreamVR.Instance.Floors);
+                        this.GetComponent<CeilingPlacer>().Place(StreamVR.Instance.Ceilings);
+                        this.GetComponent<FamilyPlacer>().Place(StreamVR.Instance.FamilyInstances);
 
-                this.LoadAll();
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning(e);
-                Display("Failed to connect. Trying Again Shortly...");
+                        Debug.Log($"StreamVR Initial load in: {s.ElapsedMilliseconds}ms");
+                        s.Stop();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
 
-                success = false;
-            }
-
-            if (!success)
-            {
-                yield return new WaitForSecondsRealtime(3);
-                TryStartRepeat();
+                    waiting = false;
+                }
             }
         }
 
@@ -101,178 +117,19 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         [MenuItem("StreamVR/Shutdown Server")]
         public static void ShutdownInterface()
         {
-            var comms = new Communicator("192.168.0.119:7002", Debug.Log);
+            var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
             comms.Connect();
-            comms.Publish(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
+            comms.Publish(comms.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
         }
 
         [MenuItem("StreamVR/Export all")]
         public static void ExportAll()
         {
-            var comms = new Communicator("192.168.0.119:7002", Debug.Log);
+            var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
             comms.Connect();
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL" }, 30000);
+            Message response = comms.RequestSync(comms.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL" }, 30000);
             Debug.Log(response);
         }
 #endif
-        public void LoadAll()
-        {
-            this.LoadMaterials();
-            this.LoadFamilies();
-            this.LoadWalls();
-            this.LoadFloors();
-            this.LoadCeilings();
-            this.LoadFamilyInstances();
-        }
-
-        public void LoadMaterials()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Material", "Material");
-            List<Common.Models.Material> materials = dataSet.Select(x => x.ToObject<Common.Models.Material>()).ToList();
-            MaterialLibrary.LoadMaterials(materials);
-        }
-
-        public void LoadFamilies()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.FamilySymbol", "Family");
-            List<Family> families = dataSet.Select(x => x.ToObject<Family>()).ToList();
-            FamilyLibrary.LoadFamilies(families);
-        }
-
-        public void LoadWalls()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Wall", "Wall");
-            List<Wall> walls = dataSet.Select(x => x.ToObject<Wall>()).ToList();
-            this.GetComponent<WallPlacer>().Place(walls);
-        }
-
-        public void LoadFloors()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Floor", "Floor");
-            List<Floor> floors = dataSet.Select(x => x.ToObject<Floor>()).ToList();
-            this.GetComponent<FloorPlacer>().Place(floors);
-        }
-
-        public void LoadCeilings()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.Ceiling", "Ceiling");
-            List<Ceiling> ceilings = dataSet.Select(x => x.ToObject<Ceiling>()).ToList();
-            this.GetComponent<CeilingPlacer>().Place(ceilings);
-        }
-
-        public void LoadFamilyInstances()
-        {
-            List<JObject> dataSet = LoadType("Autodesk.Revit.DB.FamilyInstance", "FamilyInstance");
-            List<FamilyInstance> familyInstances = dataSet.Select(x => x.ToObject<FamilyInstance>()).ToList();
-            this.GetComponent<FamilyPlacer>().Place(familyInstances);
-        }
-
-        public void Shutdown()
-        {
-            Display("Not Connected");
-            comms.Publish(Communicator.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
-        }
-
-        public void SaveFamilyInstance(FamilyInstance fam)
-        {
-            Debug.Log($"Saving {fam.Id} {fam.Name}");
-            Display($"Saving {fam.Id} {fam.Name}");
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-            {
-                Type = "SET",
-                Data = JsonConvert.SerializeObject(fam)
-            }, 5000);
-            Debug.Log(JsonConvert.SerializeObject(response));
-
-            if (fam.HostId != null)
-            {
-                Message getResponse = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-                {
-                    Type = "GET",
-                    Data = JsonConvert.SerializeObject(new
-                    {
-                        Id = fam.HostId
-                    })
-                }, 5000);
-
-                GeometryElement geo = JObject.Parse(getResponse.Data).ToObject<GeometryElement>();
-                GameObject obj = GeometryLibrary.GetObject(geo.Id);
-                Helpers.MeshGenerator.ResetFaceMeshes(geo, obj);
-            }
-        }
-
-        public FamilyInstance PlaceFamilyInstance(FamilyInstance fam)
-        {
-            Debug.Log($"Placing {fam.FamilyId}");
-            Display($"Placing {fam.FamilyId}");
-
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-            {
-                Type = "CREATE",
-                Data = JsonConvert.SerializeObject(fam)
-            }, 5000);
-            Debug.Log(JsonConvert.SerializeObject(response));
-
-            return JObject.Parse(response.Data).ToObject<FamilyInstance>();
-        }
-
-        public void PaintFace(Face newFace)
-        {
-            Debug.Log($"Updating material {newFace.ElementId} {newFace.FaceIndex} {newFace.MaterialId}");
-            Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-            {
-                Type = "PAINT",
-                Data = JsonConvert.SerializeObject(newFace)
-            }, 5000);
-            Debug.Log(JsonConvert.SerializeObject(response));
-        }
-
-        private List<JObject> LoadType(string type, string name)
-        {
-            Display($"Getting {name}s...");
-
-            try
-            {
-                Message response = comms.RequestSync(Communicator.TO_SERVER_CHANNEL, new Message
-                {
-                    Type = "GET_ALL",
-                    Data = JsonConvert.SerializeObject(new
-                    {
-                        Type = type
-                    })
-                }, 2000);
-
-                Display($"Got {name}s!");
-                Debug.Log(JsonConvert.SerializeObject(response));
-
-                if (response.Type == "ERROR")
-                {
-                    Debug.LogError(response.Data);
-                    return new List<JObject>();
-                }
-
-                List<JObject> objects = JArray.Parse(response.Data).Select(x => (JObject)x).ToList();
-
-                List<JObject> errors = objects.Where(o => o["ERROR"] != null).ToList();
-                foreach (var e in errors)
-                {
-                    Debug.LogWarning(e);
-                }
-
-                return objects.Where(o => o["ERROR"] == null).ToList();
-            }
-            catch (NATS.Client.NATSTimeoutException e)
-            {
-                Display("Timeout Exception");
-                Debug.LogWarning(e);
-            }
-            catch (Exception e)
-            {
-                Display($"Error {e.Message}");
-                Debug.LogError(e);
-            }
-
-            return new List<JObject>();
-        }
     }
 }
