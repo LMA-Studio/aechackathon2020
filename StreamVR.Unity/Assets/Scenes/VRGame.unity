@@ -753,12 +753,12 @@ PrefabInstance:
     - target: {fileID: 2392220869067512996, guid: abd54a996701d2444b26d4d5fffef98c,
         type: 3}
       propertyPath: LoadMaterials
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2392220869067512996, guid: abd54a996701d2444b26d4d5fffef98c,
         type: 3}
       propertyPath: LoadFamilies
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2392220869067512996, guid: abd54a996701d2444b26d4d5fffef98c,
         type: 3}
@@ -778,6 +778,11 @@ PrefabInstance:
     - target: {fileID: 2392220869067512996, guid: abd54a996701d2444b26d4d5fffef98c,
         type: 3}
       propertyPath: LoadFamilyInstances
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2392220869067512996, guid: abd54a996701d2444b26d4d5fffef98c,
+        type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

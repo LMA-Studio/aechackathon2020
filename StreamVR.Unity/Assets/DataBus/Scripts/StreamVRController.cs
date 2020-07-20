@@ -60,24 +60,27 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 LoadFamilyInstances = LoadFamilyInstances
             });
 
-            View3D so = StreamVR.Instance.GetStartingOrientation();
-            Character.transform.position = new Vector3(
-                (float)so.Position.X * Helpers.Constants.M_PER_FT,
-                (float)so.Position.Z * Helpers.Constants.M_PER_FT,
-                (float)so.Position.Y * Helpers.Constants.M_PER_FT
-            );
-            Character.transform.rotation = Quaternion.LookRotation(
-                new Vector3(
-                    (float)so.ForwardDirection.X,
-                    (float)so.ForwardDirection.Z,
-                    (float)so.ForwardDirection.Y
-                ),
-                new Vector3(
-                    (float)so.UpDirection.X,
-                    (float)so.UpDirection.Z,
-                    (float)so.UpDirection.Y
-                )
-            );
+            if (Character != null)
+            {
+                View3D so = StreamVR.Instance.GetStartingOrientation();
+                Character.transform.position = new Vector3(
+                    (float)so.Position.X * Helpers.Constants.M_PER_FT,
+                    (float)so.Position.Z * Helpers.Constants.M_PER_FT,
+                    (float)so.Position.Y * Helpers.Constants.M_PER_FT
+                );
+                Character.transform.rotation = Quaternion.LookRotation(
+                    new Vector3(
+                        (float)so.ForwardDirection.X,
+                        (float)so.ForwardDirection.Z,
+                        (float)so.ForwardDirection.Y
+                    ),
+                    new Vector3(
+                        (float)so.UpDirection.X,
+                        (float)so.UpDirection.Z,
+                        (float)so.UpDirection.Y
+                    )
+                );
+            }
 
             Task.Run(StreamVR.Instance.LoadAllAsync);
         }

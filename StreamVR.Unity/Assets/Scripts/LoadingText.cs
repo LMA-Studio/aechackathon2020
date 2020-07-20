@@ -14,6 +14,7 @@ public class LoadingText : MonoBehaviour
         
         int seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
         rand = new System.Random(seed);
+        ListOfActions();
         StartCoroutine(LoopDisplayMessage());
     }
 
@@ -29,7 +30,7 @@ public class LoadingText : MonoBehaviour
         {
             int randNumber = rand.Next(1, 17);
             loadingText.text = actions[randNumber];
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(2f);
         }
     }
 
@@ -39,9 +40,9 @@ public class LoadingText : MonoBehaviour
         actions.Add("PAINTING WALLS");
         actions.Add("INSTALLING FLOORING");
         actions.Add("INSTALLING LIGHT BULBS");
-        actions.Add("POURING SLAB");
+        actions.Add("POURING THE SLAB");
         actions.Add("FRAMING WALLS");
-        actions.Add("RUNNNING CONDUIT");
+        actions.Add("RUNNING CONDUIT");
         actions.Add("HANGING THE CURTAINS");
         actions.Add("CLEANING THE WINDOWS");
         actions.Add("SWEEPING UP THE DUST");

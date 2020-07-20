@@ -12,6 +12,8 @@ public class PlaceElementsMenuController : MonoBehaviour
     public Button previousButton;
     public Button nextButton;
 
+    public string filterTag;
+
     private bool isLoaded = false;
     private IEnumerable<LMAStudio.StreamVR.Common.Models.Family> allElements;
     private int pageNumber = 0;
@@ -22,8 +24,7 @@ public class PlaceElementsMenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        allElements = FamilyLibrary.GetAllFamilies();
-
+        allElements = FamilyLibrary.GetFamiliesForTag(filterTag);
     }
 
     // Update is called once per frame
@@ -31,7 +32,7 @@ public class PlaceElementsMenuController : MonoBehaviour
     {
         if (!isLoaded)
         {
-            allElements = FamilyLibrary.GetAllFamilies();
+            allElements = FamilyLibrary.GetFamiliesForTag(filterTag);
             isLoaded = allElements.Count() > 0;
 
             if (isLoaded)
@@ -101,7 +102,7 @@ public class PlaceElementsMenuController : MonoBehaviour
             var newButton = Instantiate(ElementButton, Vector3.zero, ElementButton.transform.rotation, this.transform);
             newButton.transform.localPosition = position;
             newButton.transform.localRotation = Quaternion.identity;
-            //newButton.GetComponent<PaintSelectButtonController>().buttonMaterialData = sortedElements.ElementAt(i);
+            newButton.GetComponent<PlaceFamilyButtonController>().buttonFamilylData = sortedElements.ElementAt(i);
 
             Debug.Log("got here " + i);
         }

@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class ClickPlaceMenu : MonoBehaviour
 {
     public string MenuName;
+
+    public string ItemTag;
+
     public Sprite Icon;
 
     // Start is called before the first frame update
@@ -32,6 +35,6 @@ public class ClickPlaceMenu : MonoBehaviour
     public void ClickHandler()
     {
         var menu = Resources.FindObjectsOfTypeAll(typeof(MenuController)).First() as MenuController;
-        menu.ShowMenu(MenuName, Icon);
+        menu.ShowMenu(MenuName, ItemTag, Icon);
     }
 }

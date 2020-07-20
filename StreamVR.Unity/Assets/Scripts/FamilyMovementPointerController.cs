@@ -151,7 +151,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         {
             Debug.Log("CANCELLING " + (selectedObject == null).ToString());
 
-            if (selectedObject != null)
+            if (selectedObject != null && inHand)
             {
                 GameObject.Destroy(selectedObject);
                 selectedObject = null;

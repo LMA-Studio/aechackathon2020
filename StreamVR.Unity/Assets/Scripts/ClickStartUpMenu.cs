@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using LMAStudio.StreamVR.Unity.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -61,16 +62,17 @@ public class ClickStartUpMenu : MonoBehaviour
         try
         {
             StreamVR.Instance.GetStartingOrientation();
-            ShowLoadingMenu();
-            //StreamVR.Instance.LoadAllAsync().Wait();
-            //EnterStreamVR();
         }
 
         catch (Exception e)
         {
             usernameError.text = e.Message;
+            return;
         }
 
+        ShowLoadingMenu();
+
+        Task.Run(StreamVR.Instance.LoadAllAsync);
     }
 
     public void ShowRoomCodeMenu ()
@@ -85,14 +87,6 @@ public class ClickStartUpMenu : MonoBehaviour
         ConnectionMenu.SetActive(false);
         RoomCodeMenu.SetActive(false);
         LoadingMenu.SetActive(true);
-    }
-
-    public void EnterStreamVR()
-    {
-        ConnectionMenu.SetActive(false);
-        RoomCodeMenu.SetActive(false);
-        LoadingMenu.SetActive(false);
-
-        SceneManager.LoadScene("VRGame");
+        LoadingMenu.GetComponent<WaitForLoad>().BeginWait();
     }
 }

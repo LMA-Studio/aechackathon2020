@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1557166441486331368}
   - component: {fileID: 7738580328366573131}
   - component: {fileID: 2897243399673770150}
-  - component: {fileID: 5955367607344283184}
+  - component: {fileID: 1671637636177721800}
   m_Layer: 5
   m_Name: Button_Objects
   m_TagString: Untagged
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5955367607344283184}
+      - m_Target: {fileID: 0}
         m_MethodName: ClickHandler
         m_Mode: 1
         m_Arguments:
@@ -133,7 +133,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &5955367607344283184
+--- !u!114 &1671637636177721800
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1191111587497557517}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b78a9e22f2621d247a7e13ec0938dd98, type: 3}
+  m_Script: {fileID: 11500000, guid: 24683a67b9607a94aa1b65ca014797a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5351314113104133911
@@ -394,7 +394,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3768642906837902823
 RectTransform:
   m_ObjectHideFlags: 0

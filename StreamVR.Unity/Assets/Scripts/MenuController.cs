@@ -8,10 +8,12 @@ public class MenuController : MonoBehaviour
     public GameObject HeadingIcon;
     public GameObject HeadingText;
 
+    public PlaceElementsMenuController menuController;
+
     // Start is called before the first frame update
     void Start()
     {
-        this.HideMenu();
+        //this.HideMenu();
     }
 
     // Update is called once per frame
@@ -20,11 +22,13 @@ public class MenuController : MonoBehaviour
         
     }
 
-    public void ShowMenu (string text, Sprite icon)
+    public void ShowMenu (string text, string itemTag, Sprite icon)
     {
         HeadingText.GetComponent<TMPro.TextMeshProUGUI>().text = text;
 
         HeadingIcon.GetComponent<SpriteRenderer>().sprite = icon;
+
+        menuController.filterTag = itemTag;
 
         this.gameObject.SetActive(true);
     }
