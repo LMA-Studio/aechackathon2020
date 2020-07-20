@@ -52,6 +52,11 @@ namespace LMAStudio.StreamVR.Unity.Logic
             return lib.Values.Where(v => v.Tag.Equals(tag, StringComparison.OrdinalIgnoreCase));
         }
 
+        public static IEnumerable<Family> GetAllFamilies()
+        {
+            return lib.Values;
+        }
+
         public static Family GetFamily(string id)
         {
             if (!lib.ContainsKey(id))

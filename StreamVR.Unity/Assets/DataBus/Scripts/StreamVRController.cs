@@ -93,12 +93,30 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                         System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
                         s.Start();
 
-                        MaterialLibrary.LoadMaterials(StreamVR.Instance.Materials);
-                        FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
-                        this.GetComponent<WallPlacer>().Place(StreamVR.Instance.Walls);
-                        this.GetComponent<FloorPlacer>().Place(StreamVR.Instance.Floors);
-                        this.GetComponent<CeilingPlacer>().Place(StreamVR.Instance.Ceilings);
-                        this.GetComponent<FamilyPlacer>().Place(StreamVR.Instance.FamilyInstances);
+                        if (StreamVR.Instance.Materials != null)
+                        {
+                            MaterialLibrary.LoadMaterials(StreamVR.Instance.Materials);
+                        }
+                        if (StreamVR.Instance.Families != null)
+                        {
+                            FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
+                        }
+                        if (StreamVR.Instance.Walls != null)
+                        {
+                            this.GetComponent<WallPlacer>().Place(StreamVR.Instance.Walls);
+                        }
+                        if (StreamVR.Instance.Floors != null)
+                        {
+                            this.GetComponent<FloorPlacer>().Place(StreamVR.Instance.Floors);
+                        }
+                        if (StreamVR.Instance.Ceilings != null)
+                        {
+                            this.GetComponent<CeilingPlacer>().Place(StreamVR.Instance.Ceilings);
+                        }
+                        if (StreamVR.Instance.FamilyInstances != null)
+                        {
+                            this.GetComponent<FamilyPlacer>().Place(StreamVR.Instance.FamilyInstances);
+                        }
 
                         Debug.Log($"StreamVR Initial load in: {s.ElapsedMilliseconds}ms");
                         s.Stop();

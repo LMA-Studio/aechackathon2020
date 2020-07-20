@@ -53,6 +53,7 @@ namespace LMAStudio.StreamVR.Unity.Logic
             );
 
             GameObject newFamily = new GameObject();
+            newFamily.layer = Helpers.Constants.LAYER_FAMILY;
             newFamily.transform.position = origin;
             newFamily.transform.rotation = GenerateRotation(f);
 

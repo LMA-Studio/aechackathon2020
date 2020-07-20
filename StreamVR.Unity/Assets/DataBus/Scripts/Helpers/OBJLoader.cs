@@ -243,6 +243,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             //finally, put it all together
             GameObject obj = new GameObject(_objInfo != null ? Path.GetFileNameWithoutExtension(_objInfo.Name) : objectName ?? "CustomObject");
             obj.transform.localScale = new Vector3(-1f, 1f, 1f);
+            obj.layer = Helpers.Constants.LAYER_FAMILY;
 
             foreach (var builder in builderDict)
             {
@@ -252,6 +253,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
 
                 var builtObj = builder.Value.Build();
                 builtObj.transform.SetParent(obj.transform, false);
+                builtObj.layer = Helpers.Constants.LAYER_FAMILY;
             }
 
             foreach(Vector3 light in Lights)

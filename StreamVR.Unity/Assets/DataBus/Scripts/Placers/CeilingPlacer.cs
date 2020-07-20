@@ -31,14 +31,15 @@ namespace LMAStudio.StreamVR.Unity.Logic
             {
                 Vector3 midpoint = new Vector3(0, 0, 0);
 
-                GameObject newWall = new GameObject();
-                newWall.transform.position = midpoint;
-                newWall.transform.parent = this.transform;
-                newWall.name = $"Ceiling ({c.Id})";
+                GameObject newCeiling = new GameObject();
+                newCeiling.transform.position = midpoint;
+                newCeiling.transform.parent = this.transform;
+                newCeiling.name = $"Ceiling ({c.Id})";
 
                 foreach(var f in c.Faces)
                 {
-                    Helpers.MeshGenerator.GenerateFaceMesh(f, newWall);
+                    GameObject face = Helpers.MeshGenerator.GenerateFaceMesh(f, newCeiling);
+                    face.layer = Helpers.Constants.LAYER_CEILING;
                 }
             }
         }

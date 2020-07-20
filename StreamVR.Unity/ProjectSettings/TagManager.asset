@@ -18,9 +18,9 @@ TagManager:
   - Ground
   - Body
   - RadialGazeInteraction
-  - 
-  - 
-  - 
+  - Floor
+  - Wall
+  - Ceiling
   - 
   - 
   - 

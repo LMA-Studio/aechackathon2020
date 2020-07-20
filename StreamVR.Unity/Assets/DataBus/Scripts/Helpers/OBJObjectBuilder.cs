@@ -107,6 +107,9 @@ namespace LMAStudio.StreamVR.Unity.Helpers
 
             mf.sharedMesh = msh;
 
+            var mc = go.AddComponent<MeshCollider>();
+            mc.sharedMesh = msh;
+
             //
             return go;
         }

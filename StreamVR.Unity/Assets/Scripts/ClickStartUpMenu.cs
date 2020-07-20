@@ -9,6 +9,7 @@ public class ClickStartUpMenu : MonoBehaviour
 {
     public GameObject ConnectionMenu;
     public GameObject RoomCodeMenu;
+    public GameObject LoadingMenu;
     public TMPro.TMP_InputField urlInput;
     public TMPro.TMP_InputField usernameInput;
     public TMPro.TMP_InputField roomcodeInput;
@@ -30,6 +31,7 @@ public class ClickStartUpMenu : MonoBehaviour
     public void ShowConnectionMenu ()
     {
         RoomCodeMenu.SetActive(false);
+        LoadingMenu.SetActive(false);
         ConnectionMenu.SetActive(true);
     }
 
@@ -59,7 +61,9 @@ public class ClickStartUpMenu : MonoBehaviour
         try
         {
             StreamVR.Instance.GetStartingOrientation();
-            EnterStreamVR();
+            ShowLoadingMenu();
+            //StreamVR.Instance.LoadAllAsync().Wait();
+            //EnterStreamVR();
         }
 
         catch (Exception e)
@@ -72,13 +76,22 @@ public class ClickStartUpMenu : MonoBehaviour
     public void ShowRoomCodeMenu ()
     {
         ConnectionMenu.SetActive(false);
+        LoadingMenu.SetActive(false);
         RoomCodeMenu.SetActive(true);
+    }
+
+    public void ShowLoadingMenu ()
+    {
+        ConnectionMenu.SetActive(false);
+        RoomCodeMenu.SetActive(false);
+        LoadingMenu.SetActive(true);
     }
 
     public void EnterStreamVR()
     {
         ConnectionMenu.SetActive(false);
         RoomCodeMenu.SetActive(false);
+        LoadingMenu.SetActive(false);
 
         SceneManager.LoadScene("VRGame");
     }
