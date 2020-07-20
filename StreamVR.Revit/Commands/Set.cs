@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 using LMAStudio.StreamVR.Revit.Conversions;
 using System;
 using LMAStudio.StreamVR.Common;
+using Autodesk.Revit.UI;
 
 namespace LMAStudio.StreamVR.Revit.Commands
 {
@@ -29,10 +30,12 @@ namespace LMAStudio.StreamVR.Revit.Commands
     {
         private readonly Action<string> _log;
         private readonly IGenericConverter _converter;
+        private readonly UIDocument _uiDocument;
 
-        public Set(Action<string> log, IGenericConverter converter)
+        public Set(Action<string> log, UIDocument uiDocument, IGenericConverter converter)
         {
             _log = log;
+            _uiDocument = uiDocument;
             _converter = converter;
         }
 
@@ -66,6 +69,8 @@ namespace LMAStudio.StreamVR.Revit.Commands
 
             _log("NEW VALUE");
             _log(JsonConvert.SerializeObject(dto));
+
+            _uiDocument.RefreshActiveView();
 
             return new Message
             {

@@ -71,8 +71,11 @@
     <Compile Include="Conversions\3DView.cs" />
     <Compile Include="Conversions\Wall.cs" />
     <Compile Include="Conversions\Material.cs" />
+    <Compile Include="EventHandlers\MessageEventHandler.cs" />
     <Compile Include="Helpers\GeometryConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ribbon.cs" />
+    <Compile Include="StreamVRApp.cs" />
     <Compile Include="StreamingServer.cs" />
     <Compile Include="WPF\StreamVRUI.xaml.cs">
       <DependentUpon>StreamVRUI.xaml</DependentUpon>
@@ -80,6 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="StreamVR.addin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StreamVR.Common\StreamVR.Common.csproj">
@@ -96,11 +102,13 @@
   <ItemGroup>
     <Resource Include="WPF\StreamVRLogo.png" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <PostBuildEvent>
       MD ".\$(TargetDir)StreamVR\" 2&gt; nul
       MD ".\$(TargetDir)Other\" 2&gt; nul
       MOVE /Y ".\$(TargetDir)*.dll" "D:\binaries\StreamVR\"
+      MOVE /Y ".\$(TargetDir)*.addin" "D:\binaries\"
       MOVE /Y ".\$(TargetDir)*.pdb" ".\$(TargetDir)Other\"
       MOVE /Y ".\$(TargetDir)*.xml" ".\$(TargetDir)Other\"
     </PostBuildEvent>
