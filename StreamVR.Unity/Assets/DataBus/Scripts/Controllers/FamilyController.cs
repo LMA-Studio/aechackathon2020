@@ -16,8 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using System;
-
 using UnityEngine;
 
 using LMAStudio.StreamVR.Common.Models;
@@ -26,32 +24,25 @@ using LMAStudio.StreamVR.Unity.Extensions;
 using System.Collections;
 using LMAStudio.StreamVR.Unity.Helpers;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace LMAStudio.StreamVR.Unity.Scripts
 {
     public class FamilyController : MonoBehaviour
     {
-        public string CreatedFromFamilyId;
         public string InstanceData = "";
 
         private FamilyInstance instanceData = null;
         private Family fam = null;
+        private GameObject host = null;
+        private List<string> hostableInteractions = new List<string>();
+        private bool ignoreNextDifference = false;
 
-        private void Start()
+        public IEnumerator PlaceFamily(string familyId)
         {
-            if (this.CreatedFromFamilyId != null)
-            {
-                PlaceFamily(null, CreatedFromFamilyId);
-            }
-        }
-
-        public void PlaceFamily(GameObject parent, string familyId)
-        {
-            if (parent != null)
-            {
-                this.transform.parent = parent.transform;
-            }
-
             if (FamilyLibrary.GetFamily(familyId) != null)
             {
                 FamilyInstance newFam = new FamilyInstance
@@ -68,14 +59,70 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                     }
                 };
 
-                newFam = StreamVR.Instance.PlaceFamilyInstance(newFam);
+                Debug.Log($"Requesting new family");
 
-                this.LoadInstanceAsync(newFam);
+                CoroutineWithData<FamilyInstance> cd = new CoroutineWithData<FamilyInstance>(
+                    this,
+                    StreamVR.Instance.PlaceFamilyInstance(this, newFam)
+                );
+                yield return cd.coroutine;
+                newFam = cd.result;
+
+                Debug.Log($"New family response");
+                Debug.Log(JsonConvert.SerializeObject(newFam));
+
+                this.instanceData = newFam;
+                this.InstanceData = Newtonsoft.Json.JsonConvert.SerializeObject(newFam);
+                this.fam = FamilyLibrary.GetFamily(newFam.FamilyId);
+
+                this.transform.SetPosition(instanceData.Transform);
+
+                if (newFam.HostId != null)
+                {
+                    this.host = GeometryLibrary.GetObject(newFam.HostId);
+                }
+
+#if UNITY_EDITOR
+                this.name = $"Family ({newFam.Id} - {this.fam.Tag} - {this.fam.ModelName ?? this.fam.FamilyName})";
+#else
+                this.name = newFam.Id;
+#endif
             }
             else
             {
                 Debug.LogError($"Can't create family from missing ID {familyId}");
             }
+        }
+
+        public FamilyInstance GetInstanceData()
+        {
+            return instanceData;
+        }
+
+        public int GetHostLayerMask()
+        {
+            if (host == null)
+            {
+                return 1 << Helpers.Constants.LAYER_FLOOR;
+            }
+            return 1 << host.layer;
+        }
+
+        public void UpdateInstanceData(FamilyInstance f)
+        {
+            instanceData.Transform = f.Transform;
+            instanceData.HostId = f.HostId;
+
+            this.transform.SetPosition(instanceData.Transform);
+
+            if (instanceData.HostId != null)
+            {
+                host = GeometryLibrary.GetObject(instanceData.HostId);
+            }
+
+#if UNITY_EDITOR
+            this.ignoreNextDifference = this.transform.position != currentPostion || this.transform.rotation != currentRotation;
+#endif
         }
 
         public void LoadInstanceAsync(FamilyInstance f)
@@ -85,29 +132,19 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         private IEnumerator LoadInstance(FamilyInstance f)
         {
-            CreatedFromFamilyId = null;
-
-            Matrix4x4 rotM = f.Transform.GetRotation();
-            //Matrix4x4 rotMI = rotM.inverse;
-
-            //Vector3 bbMin = new Vector3((float)f.BoundingBoxMin.X, (float)f.BoundingBoxMin.Y, (float)f.BoundingBoxMin.Z);
-            //Vector3 bbMax = new Vector3((float)f.BoundingBoxMax.X, (float)f.BoundingBoxMax.Y, (float)f.BoundingBoxMax.Z);
-
-            //Vector3 bbMinRot = rotMI.MultiplyPoint(bbMin);
-            //Vector3 bbMaxRot = rotMI.MultiplyPoint(bbMax);
-
-            //this.transform.localScale = new Vector3(
-            //    bbMax.x - bbMin.x,
-            //    bbMax.y - bbMin.y,
-            //    bbMax.z - bbMin.z
-            //);
-
-            // TODO: Create collider based on BB
-
-            this.name = $"Family ({f.Id})";
             this.instanceData = f;
             this.InstanceData = Newtonsoft.Json.JsonConvert.SerializeObject(f);
             this.fam = FamilyLibrary.GetFamily(f.FamilyId);
+            if (f.HostId != null)
+            {
+                this.host = GeometryLibrary.GetObject(f.HostId);
+            }
+            
+#if UNITY_EDITOR
+            this.name = $"Family ({f.Id} - {this.fam.Tag} - {this.fam.ModelName ?? this.fam.FamilyName})";
+#else
+            this.name = f.Id;
+#endif
 
             // GameObject model = (GameObject)Resources.Load($"Families/{this.fam.Name}/model");
             CoroutineWithData<object> cd = new CoroutineWithData<object>(this, FamilyLibrary.ResolveFamilyOBJ(f.FamilyId, f.VariantId));
@@ -131,72 +168,40 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 modelInstance.transform.parent = this.transform;
                 modelInstance.transform.localPosition = Vector3.zero;
                 modelInstance.transform.localRotation = initialRotation;
-                modelInstance.transform.localScale = new Vector3(0.3048f, 0.3048f, 0.3048f);
+                modelInstance.transform.localScale = new Vector3(
+                    Helpers.Constants.M_PER_FT,
+                    Helpers.Constants.M_PER_FT,
+                    Helpers.Constants.M_PER_FT
+                );
 
-                foreach(var l in modelInstance.GetComponentsInChildren<Light>())
+                foreach (var l in modelInstance.GetComponentsInChildren<Light>())
                 {
                     l.gameObject.transform.rotation = Quaternion.LookRotation(Vector3.down);
                 }
 
-                //Debug.Log("Parent " + this.gameObject.name);
-                //Debug.Log("Child " + modelInstance.gameObject.name);
-
-                var childXR = modelInstance.GetComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
-                if (childXR != null)
-                {
-                    // Debug.Log("HAS XR");
-                    GameObject.Destroy(childXR);
-                }
-
-
-                BoxCollider childBox = modelInstance.GetComponent<BoxCollider>();
-                if (childBox != null)
-                {
-                    // Debug.Log("HAS BOX");
-                    BoxCollider parentBox = this.gameObject.AddComponent<BoxCollider>();
-                    parentBox.size = childBox.size;
-                    parentBox.center = childBox.center;
-
-                    modelInstance.layer = 0;
-                    this.gameObject.layer = Helpers.Constants.LAYER_FAMILY;
-
-                    GameObject.Destroy(childBox);
-                }
-
-                Rigidbody childRB = modelInstance.GetComponent<Rigidbody>();
-                if (childRB != null)
-                {
-                    // Debug.Log("HAS RB");
-                    Rigidbody parentRB = this.gameObject.AddComponent<Rigidbody>();
-                    parentRB.useGravity = false;
-                    parentRB.constraints = RigidbodyConstraints.FreezeAll;
-
-                    GameObject.Destroy(childRB);
-                }
-
-                int count = 0;
                 foreach (UnityEngine.Transform child in transform)
                 {
-                    count++;
-                    if (child.gameObject.GetComponent<Rigidbody>() != null)
+                    foreach (UnityEngine.Transform geo in child)
                     {
-                       //  Debug.Log("HAS RB " + count);
-                    }
+                        var c = geo.GetComponent<FamilyGeometryController>();
+                        if (c != null)
+                        {
+                            c.CollisionEnter += this.OnCollsionEnterEvent;
+                            c.CollisionExit += this.OnCollisionExitEvent;
+                        }
 
+                    }
                 }
                 // Debug.Log("Children " + count);
-
-                this.name = $"_ Family ({f.Id} - {this.fam.Tag} - {this.fam.ModelName ?? this.fam.FamilyName})";
             }
+
+#if UNITY_EDITOR
+            StartCoroutine(CheckForUpdate());
+#endif
         }
 
         private Vector3? currentPostion = null;
         private Quaternion? currentRotation = null;
-
-        //private bool hasUpdate = false;
-        //private DateTime firstUpdate = DateTime.UtcNow;
-        //private DateTime lastUpdate = DateTime.UtcNow;
-        //private double DebounceTime = 500;
 
         void Update()
         {
@@ -207,35 +212,98 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             }
         }
 
-        public void UpdatePosition()
+        private IEnumerator CheckForUpdate()
         {
-            Debug.Log("Updating position");
-            if (this.instanceData != null)
+            for(; ;)
             {
-                Debug.Log("Registering Update");
+                if (this.transform.position != currentPostion || this.transform.rotation != currentRotation)
+                {
+                    yield return UpdatePosition();
+                }
 
-                currentPostion = this.transform.position;
-                currentRotation = this.transform.rotation;
-
-                SaveSelf();
-                Debug.Log("SAVED");
+                yield return new WaitForSeconds(2);
             }
         }
 
-        private void SaveSelf()
+        public IEnumerator UpdatePosition()
         {
+            if (this.instanceData != null)
+            {
+                currentPostion = this.transform.position;
+                currentRotation = this.transform.rotation;
+
+                if (!ignoreNextDifference)
+                {
+                    yield return SaveSelf();
+                    Debug.Log("SAVED " + this.name);
+                }
+                else
+                {
+                    ignoreNextDifference = false;
+                    Debug.Log("IGNORING " + this.name);
+                }
+            }
+        }
+
+        private IEnumerator SaveSelf()
+        {
+            FamilyInstance oldData = JObject.Parse(JsonConvert.SerializeObject(this.instanceData)).ToObject<FamilyInstance>();
+
             this.instanceData.Transform.Origin = new XYZ
             {
                 X = this.transform.position.x * Helpers.Constants.FT_PER_M,
                 Y = this.transform.position.z * Helpers.Constants.FT_PER_M,
                 Z = this.transform.position.y * Helpers.Constants.FT_PER_M,
             };
+            this.instanceData.Transform.SetRotation(this.transform);
 
-            Matrix4x4 rotationMatrix = Matrix4x4.Rotate(this.transform.rotation);
-            this.instanceData.Transform.SetRotation(rotationMatrix, this.instanceData.IsFlipped);
+            // No longer colliding with host
+            if (this.instanceData.HostId != null
+                && hostableInteractions.Count > 0
+                && !hostableInteractions.Contains(this.instanceData.HostId))
+            {
+                this.instanceData.HostId = hostableInteractions.First();
+            }
 
-            StreamVR.Instance.SaveFamilyInstance(this.instanceData);
+            yield return StreamVR.Instance.SaveFamilyInstance(this, oldData);
+
             // hasUpdate = false;
+
+            yield break;
+        }
+
+        private void OnCollsionEnterEvent(object sender, Collision collisionInfo)
+        {
+            Debug.Log("COLLIDING");
+            if (host != null)
+            {
+                GameObject collisionObject = collisionInfo.gameObject;
+                if (collisionObject.layer == host.layer)
+                {
+                    HostController controller = collisionObject.GetComponent<HostController>();
+                    if (controller != null && !hostableInteractions.Contains(controller.InstanceData.Id))
+                    {
+                        hostableInteractions.Add(controller.InstanceData.Id);
+                    }
+                }
+            }
+        }
+
+        private void OnCollisionExitEvent(object sender, Collision collisionInfo)
+        {
+            Debug.Log("COLLIDING EXIT");
+            if (host != null)
+            {
+                GameObject collisionObject = collisionInfo.gameObject;
+                if (collisionObject.layer == host.layer)
+                {
+                    HostController controller = collisionObject.GetComponent<HostController>();
+                    if (controller != null && hostableInteractions.Contains(controller.InstanceData.Id))
+                    {
+                        hostableInteractions.Remove(controller.InstanceData.Id);
+                    }
+                }
+            }
         }
     }
 }

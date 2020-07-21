@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using LMAStudio.StreamVR.Common.Models;
+using LMAStudio.StreamVR.Unity.Scripts;
 
 namespace LMAStudio.StreamVR.Unity.Logic
 {
@@ -31,14 +32,16 @@ namespace LMAStudio.StreamVR.Unity.Logic
             {
                 Vector3 midpoint = new Vector3(0, 0, 0);
 
-                GameObject newWall = new GameObject();
-                newWall.transform.position = midpoint;
-                newWall.transform.parent = this.transform;
-                newWall.name = $"Floor ({f.Id})";
+                GameObject newFloor = new GameObject();
+                newFloor.transform.position = midpoint;
+                newFloor.transform.parent = this.transform;
+                newFloor.name = $"Floor ({f.Id})";
+                newFloor.AddComponent<HostController>().UpdateInstanceData(f);
+                newFloor.layer = Helpers.Constants.LAYER_FLOOR;
 
-                foreach(var fa in f.Faces)
+                foreach (var fa in f.Faces)
                 {
-                    GameObject face = Helpers.MeshGenerator.GenerateFaceMesh(fa, newWall);
+                    GameObject face = Helpers.MeshGenerator.GenerateFaceMesh(fa, newFloor);
                     face.layer = Helpers.Constants.LAYER_FLOOR;
                 }
             }

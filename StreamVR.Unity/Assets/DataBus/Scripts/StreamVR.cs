@@ -29,6 +29,8 @@ using UnityEngine;
 using LMAStudio.StreamVR.Common.Models;
 using LMAStudio.StreamVR.Unity.Logic;
 using LMAStudio.StreamVR.Common;
+using System.Collections;
+using LMAStudio.StreamVR.Unity.Helpers;
 
 namespace LMAStudio.StreamVR.Unity.Scripts
 {
@@ -177,49 +179,138 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         #region Mutators
 
-        public void SaveFamilyInstance(FamilyInstance fam)
+        public IEnumerator SaveFamilyInstance(FamilyController behaviour, FamilyInstance oldData)
         {
+            if (behaviour.GetInstanceData().HostId == oldData.HostId)
+            {
+                yield return UpdateFamilyInstance(behaviour, oldData);
+            }
+            else
+            {
+                yield return RecreateFamilyInstance(behaviour, oldData);
+            }
+        }
+
+        public IEnumerator UpdateFamilyInstance(FamilyController behaviour, FamilyInstance oldData)
+        {
+            FamilyInstance fam = behaviour.GetInstanceData();
+
             Debug.Log($"Saving {fam.Id} {fam.Name}");
             Debug.Log($"Saving {fam.Id} {fam.Name}");
 
-            Message response = this.ServerRequest(new Message
+            CoroutineWithData<Message> cd = new CoroutineWithData<Message>(
+                behaviour,
+                this.ServerRequestCoroutine(new Message
+                {
+                    Type = "SET",
+                    Data = JsonConvert.SerializeObject(fam)
+                })
+            );
+            yield return cd.coroutine;
+            Message response = cd.result;
+
+            if (response == null)
             {
-                Type = "SET",
-                Data = JsonConvert.SerializeObject(fam)
-            });
+                Debug.LogError("FAILED TO UPDATE FAMILY INSTANCE");
+                behaviour.UpdateInstanceData(oldData);
+                yield break;
+            }
+
+            FamilyInstance newFamily = JObject.Parse(response.Data).ToObject<FamilyInstance>();
 
             Debug.Log(JsonConvert.SerializeObject(response));
 
+            behaviour.UpdateInstanceData(newFamily);
+
             if (fam.HostId != null)
             {
-                Message getResponse = this.ServerRequest(new Message
+                yield return UpdateHostGeometry(behaviour, fam.HostId);
+            }
+
+            foreach (string subComponent in fam.SubComponents)
+            {
+                behaviour.StartCoroutine(UpdateSubFamilies(behaviour, subComponent));
+            }
+        }
+
+        public IEnumerator RecreateFamilyInstance(FamilyController behaviour, FamilyInstance oldData)
+        {
+            FamilyInstance fam = behaviour.GetInstanceData();
+
+            Debug.LogError($"UPDATING HOST ID TO {fam.HostId}");
+            behaviour.UpdateInstanceData(oldData);
+
+            yield break;
+        }
+
+        private IEnumerator UpdateHostGeometry(FamilyController behaviour, string hostId)
+        {
+            CoroutineWithData<Message> cd = new CoroutineWithData<Message>(
+                behaviour,
+                this.ServerRequestCoroutine(new Message
                 {
                     Type = "GET",
                     Data = JsonConvert.SerializeObject(new
                     {
-                        Id = fam.HostId
+                        Id = hostId
                     })
-                });
+                })
+            );
+            yield return cd.coroutine;
 
-                GeometryElement geo = JObject.Parse(getResponse.Data).ToObject<GeometryElement>();
-                GameObject obj = GeometryLibrary.GetObject(geo.Id);
-                Helpers.MeshGenerator.ResetFaceMeshes(geo, obj);
-            }
+            Message getResponse = cd.result;
+
+            GeometryElement geo = JObject.Parse(getResponse.Data).ToObject<GeometryElement>();
+            GameObject obj = GeometryLibrary.GetObject(geo.Id);
+            Helpers.MeshGenerator.ResetFaceMeshes(geo, obj);
         }
 
-        public FamilyInstance PlaceFamilyInstance(FamilyInstance fam)
+        private IEnumerator UpdateSubFamilies(FamilyController behaviour, string relatedFamilyId)
+        {
+            GameObject famObj = FamilyInstanceLibrary.GetFamily(relatedFamilyId);
+
+            famObj.SetActive(false);
+
+            CoroutineWithData<Message> cd = new CoroutineWithData<Message>(
+                behaviour,
+                this.ServerRequestCoroutine(new Message
+                {
+                    Type = "GET",
+                    Data = JsonConvert.SerializeObject(new
+                    {
+                        Id = relatedFamilyId
+                    })
+                })
+            );
+            yield return cd.coroutine;
+
+            Message getResponse = cd.result;
+
+            FamilyInstance fam = JObject.Parse(getResponse.Data).ToObject<FamilyInstance>();
+            famObj.GetComponent<FamilyController>().UpdateInstanceData(fam);
+
+            famObj.SetActive(true);
+        }
+
+        public IEnumerator PlaceFamilyInstance(FamilyController behaviour, FamilyInstance fam)
         {
             Debug.Log($"Placing {fam.FamilyId}");
 
-            Message response = this.ServerRequest(new Message
-            {
-                Type = "CREATE",
-                Data = JsonConvert.SerializeObject(fam)
-            });
+            CoroutineWithData<Message> cd = new CoroutineWithData<Message>(
+                behaviour,
+                this.ServerRequestCoroutine(new Message
+                {
+                    Type = "CREATE",
+                    Data = JsonConvert.SerializeObject(fam)
+                })
+            );
+            yield return cd.coroutine;
+
+            Message response = cd.result;
 
             Debug.Log(JsonConvert.SerializeObject(response));
 
-            return JObject.Parse(response.Data).ToObject<FamilyInstance>();
+            yield return JObject.Parse(response.Data).ToObject<FamilyInstance>();
         }
 
         public void PaintFace(Face newFace)
@@ -295,6 +386,38 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         public async Task<Message> ServerRequestAsync(Message msg)
         {
             return await this.comms.Request(this.comms.TO_SERVER_CHANNEL, msg, 5000);
+        }
+
+        public IEnumerator ServerRequestCoroutine(Message msg)
+        {
+            Task<Message> requestTask = this.comms.Request(this.comms.TO_SERVER_CHANNEL, msg, 5000);
+
+            int totalIteration = 0;
+            while(true)
+            {
+                if (requestTask.IsCompleted || requestTask.IsFaulted || requestTask.IsCanceled)
+                {
+                    break;
+                }
+
+                yield return new WaitForSeconds(0.1f);
+
+                totalIteration++;
+
+                if (totalIteration > 100)
+                {
+                    break;
+                }
+            }
+
+            if (totalIteration <= 100)
+            {
+                yield return requestTask.Result;
+            }
+            else
+            {
+                yield return null;
+            }
         }
 
         #endregion

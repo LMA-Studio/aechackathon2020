@@ -114,6 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: Doors
   Icon: {fileID: 0}
 --- !u!1 &805497067268972815
 GameObject:
@@ -431,6 +432,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: 
   Icon: {fileID: 0}
 --- !u!1 &2768118360703181290
 GameObject:
@@ -546,6 +548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: 
   Icon: {fileID: 0}
 --- !u!1 &2852516423003733751
 GameObject:
@@ -735,6 +738,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: 
   Icon: {fileID: 0}
 --- !u!1 &3570547122924099744
 GameObject:
@@ -850,6 +854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: Lighting Fixtures
   Icon: {fileID: 0}
 --- !u!1 &3621564644886956774
 GameObject:
@@ -1039,6 +1044,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: Plumbing Fixtures
   Icon: {fileID: 0}
 --- !u!1 &4055071832441150346
 GameObject:
@@ -1228,6 +1234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: Windows
   Icon: {fileID: 0}
 --- !u!1 &5778645864016189527
 GameObject:
@@ -1417,6 +1424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
+  ItemTag: Furniture
   Icon: {fileID: 0}
 --- !u!1 &7283451640625931038
 GameObject:

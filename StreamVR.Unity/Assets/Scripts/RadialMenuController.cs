@@ -12,12 +12,14 @@ public class RadialMenuController : MonoBehaviour
     public GameObject MoveMenu;
     public GameObject Wand;
     public GameObject MoveRay;
+    public GameObject PlaceRay;
 
     // Start is called before the first frame update
     void Start()
     {
         this.ShowGenMenu();
         MoveRay.SetActive(false);
+        PlaceRay.SetActive(false);
     }
 
     // Update is called once per frame
@@ -48,6 +50,7 @@ public class RadialMenuController : MonoBehaviour
         Wand.SetActive(false);
         MoveMenu.SetActive(false);
         MoveRay.SetActive(false);
+        PlaceRay.SetActive(false);
         PlaceMenu.SetActive(true);
 
     }
@@ -59,6 +62,7 @@ public class RadialMenuController : MonoBehaviour
         PlaceMenu.SetActive(false);
         MoveMenu.SetActive(false);
         MoveRay.SetActive(false);
+        PlaceRay.SetActive(false);
         GeneralMenu.SetActive(true);
     }
 
@@ -68,6 +72,7 @@ public class RadialMenuController : MonoBehaviour
         PlaceMenu.SetActive(false);
         MoveMenu.SetActive(false);
         MoveRay.SetActive(false);
+        PlaceRay.SetActive(false);
         PaletteMenu.SetActive(true);
         Wand.SetActive(true);
 

@@ -17,34 +17,28 @@
 */
 
 using System.Collections.Generic;
-using UnityEngine;
 
 using LMAStudio.StreamVR.Common.Models;
-using LMAStudio.StreamVR.Unity.Scripts;
+using UnityEngine;
 
 namespace LMAStudio.StreamVR.Unity.Logic
 {
-    public class CeilingPlacer : MonoBehaviour
+    public static class FamilyInstanceLibrary
     {
-        public void Place(List<Ceiling> ceilings)
+        private static Dictionary<string, GameObject> lib = new Dictionary<string, GameObject>();
+
+        public static void AddFamily(FamilyInstance fam, GameObject go)
         {
-            foreach(var c in ceilings)
+            lib.Add(fam.Id, go);
+        }
+
+        public static GameObject GetFamily(string id)
+        {
+            if (!lib.ContainsKey(id))
             {
-                Vector3 midpoint = new Vector3(0, 0, 0);
-
-                GameObject newCeiling = new GameObject();
-                newCeiling.transform.position = midpoint;
-                newCeiling.transform.parent = this.transform;
-                newCeiling.name = $"Ceiling ({c.Id})";
-                newCeiling.AddComponent<HostController>().UpdateInstanceData(c);
-                newCeiling.layer = Helpers.Constants.LAYER_CEILING;
-
-                foreach (var f in c.Faces)
-                {
-                    GameObject face = Helpers.MeshGenerator.GenerateFaceMesh(f, newCeiling);
-                    face.layer = Helpers.Constants.LAYER_CEILING;
-                }
+                return null;
             }
+            return lib[id];
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using LMAStudio.StreamVR.Unity.Logic;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +19,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         private LineRenderer lineRenderer = null;
 
         private GameObject selectedObject = null;
+        private FamilyController originalObjectController = null;
         private GameObject origionalObject = null;
 
         private Quaternion currentRotation = Quaternion.identity;
@@ -111,8 +113,28 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             Debug.Log("PICKING UP");
             if (selectedObject != null && selectedObject.transform.parent != null)
             {
-                origionalObject = selectedObject.transform.parent.parent.gameObject;
+                GameObject selectedFamily = selectedObject.transform.parent.parent.gameObject;
+                FamilyController selectedFamilyController = selectedFamily.GetComponent<FamilyController>();
+                Common.Models.FamilyInstance selectedInstanceData = selectedFamilyController.GetInstanceData();
 
+                List<string> tree = new List<string>();
+                while(selectedInstanceData.SuperComponent != null)
+                {
+                    // Cyclical hierarchy
+                    if (tree.Contains(selectedInstanceData.SuperComponent))
+                    {
+                        break;
+                    }
+                    tree.Add(selectedInstanceData.SuperComponent);
+
+                    selectedFamily = FamilyInstanceLibrary.GetFamily(selectedInstanceData.SuperComponent);
+                    selectedFamilyController = selectedFamily.GetComponent<FamilyController>();
+                    selectedInstanceData = selectedFamilyController.GetInstanceData();
+                }
+
+                origionalObject = selectedFamily;
+                originalObjectController = selectedFamilyController;
+                currentRotation = origionalObject.transform.rotation;
                 selectedObject = GameObject.Instantiate(origionalObject, origionalObject.transform.position, origionalObject.transform.rotation);
 
                 foreach (Transform child in selectedObject.transform)
@@ -127,6 +149,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 inHand = true;
             }
         }
+
         private void PutDown()
         {
             Debug.Log("PUTTING DOWN");
@@ -136,17 +159,23 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 origionalObject.transform.position = selectedObject.transform.position;
                 origionalObject.transform.rotation = selectedObject.transform.rotation;
 
-                GameObject.Destroy(selectedObject);
+                var controller = origionalObject.GetComponent<FamilyController>();
+                StartCoroutine(UpdateAndDestroyGhost(controller, selectedObject));
+
                 selectedObject = null;
-
-                origionalObject.GetComponent<FamilyController>().UpdatePosition();
+                originalObjectController = null;
                 origionalObject = null;
-
             }
 
-            selectedObject = null;
             inHand = false;
         }
+
+        private IEnumerator UpdateAndDestroyGhost(FamilyController controller, GameObject ghost)
+        {
+            yield return controller.UpdatePosition();
+            GameObject.Destroy(ghost);
+        }
+
         private void Cancel()
         {
             Debug.Log("CANCELLING " + (selectedObject == null).ToString());
@@ -154,15 +183,14 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             if (selectedObject != null && inHand)
             {
                 GameObject.Destroy(selectedObject);
+
                 selectedObject = null;
+                originalObjectController = null;
                 origionalObject = null;
 
+                currentRotation = Quaternion.identity;
+                inHand = false;
             }
-
-            selectedObject = null;
-            inHand = false;
-
-            // this.gameObject.SetActive(false);
         }
 
         private Vector3 CalculatedEnd()
@@ -214,7 +242,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
             Ray ray = new Ray(transform.position, transform.forward);
 
-            Physics.Raycast(ray, out hit, defaultLengthPlace, 1 << 9);
+            int layerMask = originalObjectController.GetHostLayerMask();
+            Physics.Raycast(ray, out hit, defaultLengthPlace, layerMask);
 
             return hit;
         }

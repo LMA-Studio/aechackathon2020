@@ -26,138 +26,66 @@ namespace LMAStudio.StreamVR.Unity.Extensions
 {
     public static class XYZExtensions
     {
-        public static Matrix4x4 GetRotation(this Matrix4x4 m, XYZ bx, XYZ by, XYZ bz)
+        public static void SetPosition(this UnityEngine.Transform got, Common.Models.Transform t)
         {
-            m[0, 0] = (float)bx.X;
-            m[0, 1] = (float)bx.Z;
-            m[0, 2] = (float)bx.Y;
+            XYZ originXYZ = t.Origin;
+            Vector3 origin = new Vector3(
+                (float)originXYZ.X * Helpers.Constants.M_PER_FT,
+                (float)originXYZ.Z * Helpers.Constants.M_PER_FT,
+                (float)originXYZ.Y * Helpers.Constants.M_PER_FT
+            );
 
-            m[1, 0] = (float)bz.X;
-            m[1, 1] = (float)bz.Z;
-            m[1, 2] = (float)bz.Y;
+            Vector3 newForward = new Vector3(
+                (float)t.BasisY.X,
+                (float)t.BasisY.Z,
+                (float)t.BasisY.Y
+            );
 
-            m[2, 0] = (float)by.X;
-            m[2, 1] = (float)by.Z;
-            m[2, 2] = (float)by.Y;
+            Vector3 newRight = new Vector3(
+                (float)t.BasisX.X,
+                (float)t.BasisX.Z,
+                (float)t.BasisX.Y
+            );
+            //if (f.IsHandFlipped)
+            //{
+            //    newRight = -newRight;
+            //}
 
-            return m;
+            //if (f.IsFlipped)
+            //{
+            //    newForward = -newForward;
+            //    newRight = -newRight;
+            //}
+
+            Vector3 newUp = Vector3.Cross(newForward, newRight);
+
+            got.position = origin;
+            got.rotation = Quaternion.LookRotation(
+                newForward,
+                newUp
+            );
         }
 
-        public static Matrix4x4 GetRotation(this Common.Models.Transform t, bool flipped = false)
+        public static void SetRotation(this Common.Models.Transform t, UnityEngine.Transform got)
         {
-            XYZ bx = t.BasisX;
-            XYZ by = t.BasisY;
-            XYZ bz = t.BasisZ;
-
-            // float angle = 180 - Mathf.Atan2((float)t.BasisX.Y, (float)t.BasisX.X) * 180 / Mathf.PI + 180;
-
-            // Matrix4x4 m = Matrix4x4.Rotate(Quaternion.AngleAxis(angle, Vector3.up));
-            Matrix4x4 m = new Matrix4x4();
-
-            // m[0, 0] = (float)bx.X;
-            // m[0, 1] = (float)bx.Y;
-            // m[0, 2] = (float)bx.Z;
-
-            // m[1, 0] = (float)by.X;
-            // m[1, 1] = (float)by.Y;
-            // m[1, 2] = (float)by.Z;
-
-            // m[2, 0] = (float)bz.X;
-            // m[2, 1] = (float)bz.Y;
-            // m[2, 2] = (float)bz.Z;
-
-            m[0, 0] = (float)bx.X;
-            m[0, 1] = -(float)bx.Z;
-            m[0, 2] = -(float)bx.Y;
-
-            m[1, 0] = -(float)bz.X;
-            m[1, 1] = (float)bz.Z;
-            m[1, 2] = -(float)bz.Y;
-
-            m[2, 0] = -(float)by.X;
-            m[2, 1] = -(float)by.Z;
-            m[2, 2] = (float)by.Y;
-
-            // if (flipped)
-            // {
-            //     m[0, 1] = -m[0, 1];
-            //     m[0, 2] = -m[0, 2];
-            //     m[1, 0] = -m[1, 0];
-            //     m[1, 2] = -m[1, 2];
-            //     m[2, 0] = -m[2, 0];
-            //     m[2, 1] = -m[2, 1];
-            // }
-            
-
-            return m;
-        }
-
-        public static Matrix4x4 GetRotationRH(this Common.Models.Transform t)
-        {
-            XYZ bx = t.BasisX;
-            XYZ by = t.BasisY;
-            XYZ bz = t.BasisZ;
-
-            Matrix4x4 m = new Matrix4x4();
-
-            m[0, 0] = (float)bx.X;
-            m[0, 1] = (float)bx.Y;
-            m[0, 2] = (float)bx.Z;
-
-            m[1, 0] = (float)by.X;
-            m[1, 1] = (float)by.Y;
-            m[1, 2] = (float)by.Z;
-
-            m[2, 0] = (float)bz.X;
-            m[2, 1] = (float)bz.Y;
-            m[2, 2] = (float)bz.Z;
-
-            return m;
-        }
-
-        public static void SetRotation(this Common.Models.Transform t, Matrix4x4 m, bool flip)
-        {
-            float angle = 0;
-
-            Vector3 axis = Vector3.up;
-
-            m.rotation.ToAngleAxis(out angle, out axis);
-
-            angle = 180 - angle;
-
-            if (flip)
+            t.BasisX = new XYZ
             {
-                angle = angle + 180;
-            }
-
-            if (angle <= -180)
+                X = got.right.x,
+                Y = got.right.z,
+                Z = got.right.y,
+            };
+            t.BasisY = new XYZ
             {
-                angle += 360;
-            }
-            if (angle > 180)
+                X = got.forward.x,
+                Y = got.forward.z,
+                Z = got.forward.y,
+            };
+            t.BasisZ = new XYZ
             {
-                angle -= 360;
-            }
-            Debug.Log("SAVING " + angle);
-
-            m = Matrix4x4.Rotate(Quaternion.AngleAxis(angle, axis));
-
-            t.BasisX.X = m.m00;
-            t.BasisX.Z = m.m01;
-            t.BasisX.Y = m.m02;
-
-            t.BasisZ.X = m.m10;
-            t.BasisZ.Z = m.m11;
-            t.BasisZ.Y = m.m12;
-
-            t.BasisY.X = m.m20;
-            t.BasisY.Z = m.m21;
-            t.BasisY.Y = m.m22;
-
-            Debug.Log(m);
-
-            double newAngle2 = Math.Atan2(t.BasisX.Y, t.BasisX.X) * 180 / Math.PI;
-            Debug.Log("SAVING 2 " + newAngle2);
+                X = got.up.x,
+                Y = got.up.z,
+                Z = got.up.y,
+            };
         }
     }
 }

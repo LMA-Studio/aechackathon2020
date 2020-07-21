@@ -119,6 +119,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                         if (StreamVR.Instance.FamilyInstances != null)
                         {
                             this.GetComponent<FamilyPlacer>().Place(StreamVR.Instance.FamilyInstances);
+                            FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
                         }
 
                         Debug.Log($"StreamVR Initial load in: {s.ElapsedMilliseconds}ms");

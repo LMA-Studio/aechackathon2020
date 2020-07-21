@@ -22,7 +22,7 @@ public class ClickPlaceMenu : MonoBehaviour
 
         if (string.IsNullOrEmpty(MenuName))
         {
-            MenuName=this.gameObject.name;
+            MenuName = this.gameObject.name;
         }
     }
 

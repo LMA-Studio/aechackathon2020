@@ -110,6 +110,13 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             var mc = go.AddComponent<MeshCollider>();
             mc.sharedMesh = msh;
 
+            var rb = go.AddComponent<Rigidbody>();
+            rb.useGravity = false;
+            rb.isKinematic = true;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+
+            go.AddComponent<Scripts.FamilyGeometryController>();
+
             //
             return go;
         }

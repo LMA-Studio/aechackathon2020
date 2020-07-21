@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using LMAStudio.StreamVR.Common.Models;
+using LMAStudio.StreamVR.Unity.Scripts;
 
 namespace LMAStudio.StreamVR.Unity.Logic
 {
@@ -47,8 +48,10 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 newWall.transform.position = midpoint;
                 newWall.transform.parent = this.transform;
                 newWall.name = $"Wall ({w.Id})";
+                newWall.AddComponent<HostController>().UpdateInstanceData(w);
+                newWall.layer = Helpers.Constants.LAYER_WALL;
 
-                foreach(var f in w.Faces)
+                foreach (var f in w.Faces)
                 {
                     GameObject face = Helpers.MeshGenerator.GenerateFaceMesh(f, newWall);
                     face.layer = Helpers.Constants.LAYER_WALL;

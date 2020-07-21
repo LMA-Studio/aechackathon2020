@@ -45,52 +45,14 @@ namespace LMAStudio.StreamVR.Unity.Logic
 
         public void Place(FamilyInstance f)
         {
-            XYZ originXYZ = f.Transform.Origin;
-            Vector3 origin = new Vector3(
-                (float)originXYZ.X * Helpers.Constants.M_PER_FT,
-                (float)originXYZ.Z * Helpers.Constants.M_PER_FT,
-                (float)originXYZ.Y * Helpers.Constants.M_PER_FT
-            );
-
             GameObject newFamily = new GameObject();
-            newFamily.layer = Helpers.Constants.LAYER_FAMILY;
-            newFamily.transform.position = origin;
-            newFamily.transform.rotation = GenerateRotation(f);
 
+            newFamily.layer = Helpers.Constants.LAYER_FAMILY;
+            newFamily.transform.SetPosition(f.Transform);
             newFamily.transform.parent = this.transform;
             newFamily.AddComponent<FamilyController>().LoadInstanceAsync(f);
-        }
 
-        private Quaternion GenerateRotation(FamilyInstance f)
-        {
-            Vector3 newForward = new Vector3(
-                (float)f.Transform.BasisY.X,
-                (float)f.Transform.BasisY.Z,
-                (float)f.Transform.BasisY.Y
-            );
-
-            Vector3 newRight = new Vector3(
-                (float)f.Transform.BasisX.X,
-                (float)f.Transform.BasisX.Z,
-                (float)f.Transform.BasisX.Y
-            );
-            //if (f.IsHandFlipped)
-            //{
-            //    newRight = -newRight;
-            //}
-
-            //if (f.IsFlipped)
-            //{
-            //    newForward = -newForward;
-            //    newRight = -newRight;
-            //}
-
-            Vector3 newUp = Vector3.Cross(newForward, newRight);
-
-            return Quaternion.LookRotation(
-                newForward,
-                newUp
-            );
+            FamilyInstanceLibrary.AddFamily(f, newFamily);
         }
     }
 }

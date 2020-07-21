@@ -1,15 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using LMAStudio.StreamVR.Unity.Helpers;
 using LMAStudio.StreamVR.Unity.Logic;
+using LMAStudio.StreamVR.Unity.Scripts;
 using UnityEngine;
 
 public class PlaceFamilyButtonController : MonoBehaviour
 {
-    public LMAStudio.StreamVR.Common.Models.Family buttonFamilylData;
+    public LMAStudio.StreamVR.Common.Models.Family buttonFamilyData;
 
-    private Material buttonMaterial;
+    private GameObject modelInstance;
 
     // Start is called before the first frame update
     void Start()
@@ -25,8 +27,7 @@ public class PlaceFamilyButtonController : MonoBehaviour
 
     private IEnumerator Load()
     {
-        
-        CoroutineWithData<object> cd = new CoroutineWithData<object>(this, FamilyLibrary.ResolveFamilyOBJ(buttonFamilylData.Id, null));
+        CoroutineWithData<object> cd = new CoroutineWithData<object>(this, FamilyLibrary.ResolveFamilyOBJ(buttonFamilyData.Id, null));
         yield return cd.coroutine;
         object result = cd.result;
 
@@ -34,7 +35,6 @@ public class PlaceFamilyButtonController : MonoBehaviour
         {
             byte[] objData = cd.result as byte[];
 
-            GameObject modelInstance;
             using (var textStream = new MemoryStream(objData))
             {
                 modelInstance = new OBJLoader().Load(textStream);
@@ -46,13 +46,13 @@ public class PlaceFamilyButtonController : MonoBehaviour
             modelInstance.transform.localScale = new Vector3(5,5,5);
         }
         
-        this.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = FormatName(buttonFamilylData.FamilyName);
+        this.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = FormatName(buttonFamilyData.FamilyName);
     }
 
     public void ClickHandler()
     { 
-        // var paintWandEnd = Resources.FindObjectsOfTypeAll(typeof(PaintWandEndController)).First() as PaintWandEndController;
-        // paintWandEnd.SelectMaterial(buttonMaterial);
+        var placePointer = Resources.FindObjectsOfTypeAll(typeof(FamilyPlacementPointerController)).First() as FamilyPlacementPointerController;
+        placePointer.BeginPlacing(modelInstance, buttonFamilyData);
     }
 
     private string FormatName (string Name)

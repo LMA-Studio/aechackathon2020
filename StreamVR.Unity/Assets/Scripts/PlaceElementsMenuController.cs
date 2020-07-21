@@ -47,6 +47,17 @@ public class PlaceElementsMenuController : MonoBehaviour
         }
     }
 
+    public void ResetMenu()
+    {
+        isLoaded = false;
+        pageNumber = 0;
+
+        foreach (Transform child in transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
     private void RenderPage ()
     {
         foreach (Transform child in transform)
@@ -102,7 +113,7 @@ public class PlaceElementsMenuController : MonoBehaviour
             var newButton = Instantiate(ElementButton, Vector3.zero, ElementButton.transform.rotation, this.transform);
             newButton.transform.localPosition = position;
             newButton.transform.localRotation = Quaternion.identity;
-            newButton.GetComponent<PlaceFamilyButtonController>().buttonFamilylData = sortedElements.ElementAt(i);
+            newButton.GetComponent<PlaceFamilyButtonController>().buttonFamilyData = sortedElements.ElementAt(i);
 
             Debug.Log("got here " + i);
         }

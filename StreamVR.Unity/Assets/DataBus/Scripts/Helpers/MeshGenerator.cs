@@ -30,14 +30,17 @@ namespace LMAStudio.StreamVR.Unity.Helpers
     {
         public static void ResetFaceMeshes(GeometryElement geo, GameObject parent)
         {
-            foreach(UnityEngine.Transform child in parent.transform)
+            int previousLayer = parent.layer;
+
+            foreach (UnityEngine.Transform child in parent.transform)
             {
                 GameObject.Destroy(child.gameObject);
             }
 
             foreach (Face f in geo.Faces)
             {
-                GenerateFaceMesh(f, parent);
+                GameObject newface = GenerateFaceMesh(f, parent);
+                newface.layer = previousLayer;
             }
         }
 

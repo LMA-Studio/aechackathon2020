@@ -918,6 +918,11 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5228886404473268672, guid: 58745859436bb544a844e7186682d422,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5649505577247915309}
     - target: {fileID: 8759089782219551850, guid: 58745859436bb544a844e7186682d422,
         type: 3}
       propertyPath: m_Name
@@ -1085,6 +1090,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button_Next
       objectReference: {fileID: 0}
+    - target: {fileID: 4495029512373878862, guid: 92cd9a0f53233b34f83a8814ef49cd74,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5649505577247915309}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 92cd9a0f53233b34f83a8814ef49cd74, type: 3}
 --- !u!224 &7634864780629679031 stripped
