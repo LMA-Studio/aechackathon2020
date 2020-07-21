@@ -30,5 +30,8 @@ namespace LMAStudio.StreamVR.Common.Models
         public string Description { get; set; }
         public string Tag { get; set; }
         public string FamilyId { get; set; }
+
+        public XYZ BoundingBoxMin { get; set; }
+        public XYZ BoundingBoxMax { get; set; }
     }
 }

@@ -117,10 +117,6 @@ namespace LMAStudio.StreamVR.Revit
 
                 uiapp.Application.WriteJournalComment("[STREAMVR] CREATING FORM", true);
 
-                // We give the objects to the new dialog;
-                // The dialog becomes the owner responsible for disposing them, eventually.
-
-
                 var startingViews = new FilteredElementCollector(uiapp.ActiveUIDocument.Document).
                     OfClass(typeof(View3D)).
                     Select(e => e as View3D);

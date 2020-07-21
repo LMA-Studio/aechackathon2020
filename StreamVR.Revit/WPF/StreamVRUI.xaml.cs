@@ -68,6 +68,7 @@ namespace LMAStudio.StreamVR.Revit.WPF
                         {
                             Message msg = msgQueue.Dequeue();
 
+                            _log("[STREAMVR] Next msg");
                             _log(JsonConvert.SerializeObject(msg));
 
                             if (msg.Reply != null)
@@ -78,10 +79,19 @@ namespace LMAStudio.StreamVR.Revit.WPF
 
                                 while(StreamVRApp.Instance.CurrentResponse == null)
                                 {
-                                    Thread.Sleep(100);
+                                    Thread.Sleep(50);
                                 }
 
                                 Message response = StreamVRApp.Instance.CurrentResponse;
+
+                                if (response.Type == "ERROR")
+                                {
+                                    _log($"[STREAMVR] Error response");
+                                    _log(JsonConvert.SerializeObject(response));
+                                }
+
+                                _log($"[STREAMVR] Replying to request");
+
                                 response.Reply = msg.Reply;
                                 cc.Publish(msg.Reply, response);
 
@@ -93,7 +103,7 @@ namespace LMAStudio.StreamVR.Revit.WPF
                                 _shutdown = true;
                             }
                         }
-                        Thread.Sleep(200);
+                        Thread.Sleep(100);
                     }
                 }
             });

@@ -63,19 +63,14 @@ namespace LMAStudio.StreamVR.Revit.Commands
             var materials = new FilteredElementCollector(doc).
                 OfClass(t).
                 Where(e => e != null).
-                Select(e =>
-                {
-                    _log($"Id {e.Id}");
-                    return e;
-                }).
                 Select(_converter.ConvertToDTO).
                 ToList();
 
-            _log($"Found {materials.Count} materials");
+            _log($"Found {materials.Count} objects [{dataType}]");
 
             var converted = JArray.FromObject(materials);
 
-            _log($"Converted {converted.Count} materials");
+            _log($"Converted {converted.Count} objects [{dataType}]");
 
             return new Message
             {

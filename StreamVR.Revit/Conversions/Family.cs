@@ -31,6 +31,7 @@ namespace LMAStudio.StreamVR.Revit.Conversions
     {
         public JObject ConvertToDTO(Autodesk.Revit.DB.FamilySymbol source)
         {
+            BoundingBoxXYZ bb = source.get_BoundingBox(null);
             LMAStudio.StreamVR.Common.Models.Family dest = new LMAStudio.StreamVR.Common.Models.Family
             {
                 Id = source.Id.ToString(),
@@ -40,7 +41,19 @@ namespace LMAStudio.StreamVR.Revit.Conversions
                 Manufacturer = source.GetParameters("Manufacturer name").FirstOrDefault()?.AsString(),
                 Description = source.get_Parameter(BuiltInParameter.ALL_MODEL_DESCRIPTION)?.AsValueString(),
                 Tag = source.get_Parameter(BuiltInParameter.ELEM_CATEGORY_PARAM)?.AsValueString(),
-                FamilyId = source.UniqueId
+                FamilyId = source.UniqueId,
+                BoundingBoxMin = new LMAStudio.StreamVR.Common.Models.XYZ
+                {
+                    X = bb?.Min.X ?? 0,
+                    Y = bb?.Min.Y ?? 0,
+                    Z = bb?.Min.Z ?? 0,
+                },
+                BoundingBoxMax = new LMAStudio.StreamVR.Common.Models.XYZ
+                {
+                    X = bb?.Max.X ?? 0,
+                    Y = bb?.Max.Y ?? 0,
+                    Z = bb?.Max.Z ?? 0,
+                },
             };
 
             return JObject.FromObject(dest);

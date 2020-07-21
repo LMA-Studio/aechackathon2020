@@ -53,18 +53,20 @@ namespace LMAStudio.StreamVR.Revit.Conversions
                 HostId = source.Host?.Id.ToString(),
                 FamilyId = fam.Id.ToString(),
                 VariantId = geometryHash.ToString(),
-                BoundingBoxMin = new LMAStudio.StreamVR.Common.Models.XYZ
-                {
-                    X = bb?.Min.X ?? 0,
-                    Y = bb?.Min.Y ?? 0,
-                    Z = bb?.Min.Z ?? 0,
-                },
-                BoundingBoxMax = new LMAStudio.StreamVR.Common.Models.XYZ
-                {
-                    X = bb?.Max.X ?? 0,
-                    Y = bb?.Max.Y ?? 0,
-                    Z = bb?.Max.Z ?? 0,
-                },
+                SubComponents = source.GetSubComponentIds().Select(e => e.ToString()),
+                SuperComponent = source.SuperComponent?.Id.ToString(),
+                //BoundingBoxMin = new LMAStudio.StreamVR.Common.Models.XYZ
+                //{
+                //    X = bb?.Min.X ?? 0,
+                //    Y = bb?.Min.Y ?? 0,
+                //    Z = bb?.Min.Z ?? 0,
+                //},
+                //BoundingBoxMax = new LMAStudio.StreamVR.Common.Models.XYZ
+                //{
+                //    X = bb?.Max.X ?? 0,
+                //    Y = bb?.Max.Y ?? 0,
+                //    Z = bb?.Max.Z ?? 0,
+                //},
                 IsFlipped = source.FacingFlipped,
                 FacingOrientation = new LMAStudio.StreamVR.Common.Models.XYZ
                 {
@@ -146,11 +148,25 @@ namespace LMAStudio.StreamVR.Revit.Conversions
                 throw new Exception($"Failed to find family with id {famI.FamilyId}");
             }
 
-            return doc.Create.NewFamilyInstance(
-                newOrigin,
-                fam,
-                StructuralType.NonStructural
-            );
+            if (famI.HostId != null)
+            {
+                ElementId hostId = new ElementId(Int32.Parse(famI.HostId));
+                return doc.Create.NewFamilyInstance(
+                    newOrigin,
+                    fam,
+                    doc.GetElement(hostId),
+                    StructuralType.NonStructural
+                );
+            }
+            else
+            {
+                return doc.Create.NewFamilyInstance(
+                    newOrigin,
+                    fam,
+                    StructuralType.NonStructural
+                );
+            }
         }
+
     }
 }
