@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using LMAStudio.StreamVR.Unity.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -11,15 +12,17 @@ public class RadialMenuController : MonoBehaviour
     public GameObject PaletteMenu;
     public GameObject MoveMenu;
     public GameObject Wand;
-    public GameObject MoveRay;
+    public FamilyMovementPointerController MoveRay;
     public GameObject PlaceRay;
+    public GameObject DeleteRay;
 
     // Start is called before the first frame update
     void Start()
     {
         this.ShowGenMenu();
-        MoveRay.SetActive(false);
+        MoveRay.SleepPointer();
         PlaceRay.SetActive(false);
+        DeleteRay.SetActive(false);
     }
 
     // Update is called once per frame
@@ -40,7 +43,14 @@ public class RadialMenuController : MonoBehaviour
 
     public void ActivateMoveRay()
     {
-        MoveRay.SetActive(true);
+        MoveRay.WakeUpPointer();
+        DeleteRay.SetActive(false);
+    }
+
+    public void ActivateDeleteRay()
+    {
+        DeleteRay.SetActive(true);
+        MoveRay.SleepPointer();
     }
 
     public void ShowPlaceMenu()
@@ -49,7 +59,8 @@ public class RadialMenuController : MonoBehaviour
         PaletteMenu.SetActive(false);
         Wand.SetActive(false);
         MoveMenu.SetActive(false);
-        MoveRay.SetActive(false);
+        MoveRay.SleepPointer();
+        DeleteRay.SetActive(false);
         PlaceRay.SetActive(false);
         PlaceMenu.SetActive(true);
 
@@ -61,8 +72,9 @@ public class RadialMenuController : MonoBehaviour
         Wand.SetActive(false);
         PlaceMenu.SetActive(false);
         MoveMenu.SetActive(false);
-        MoveRay.SetActive(false);
+        MoveRay.SleepPointer();
         PlaceRay.SetActive(false);
+        DeleteRay.SetActive(false);
         GeneralMenu.SetActive(true);
     }
 
@@ -71,8 +83,9 @@ public class RadialMenuController : MonoBehaviour
         GeneralMenu.SetActive(false);
         PlaceMenu.SetActive(false);
         MoveMenu.SetActive(false);
-        MoveRay.SetActive(false);
+        MoveRay.SleepPointer();
         PlaceRay.SetActive(false);
+        DeleteRay.SetActive(false);
         PaletteMenu.SetActive(true);
         Wand.SetActive(true);
 

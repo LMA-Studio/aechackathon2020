@@ -34,6 +34,7 @@ Transform:
   - {fileID: 8661454124649640793}
   - {fileID: 3536594198369869191}
   - {fileID: 5855823484451518486}
+  - {fileID: 7357552307292902794}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -264,6 +265,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PaintWand
       objectReference: {fileID: 0}
+    - target: {fileID: 334805096465788037, guid: e9c7400e9d5f34e4d84902586792afb1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1863505591937477986, guid: e9c7400e9d5f34e4d84902586792afb1,
         type: 3}
       propertyPath: rightInteractorRay
@@ -342,6 +348,86 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2112149277270793526}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6248890036142006569
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 84448629244223322}
+    m_Modifications:
+    - target: {fileID: 1218111173673336077, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_Name
+      value: DeleteRay
+      objectReference: {fileID: 0}
+    - target: {fileID: 1218111173673336077, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e2c106fe288663745af4e85d7bf75036, type: 3}
+--- !u!4 &7357552307292902794 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3504859023309829283, guid: e2c106fe288663745af4e85d7bf75036,
+    type: 3}
+  m_PrefabInstance: {fileID: 6248890036142006569}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8720116526451161239
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -409,6 +495,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: FamilyMoveRay
       objectReference: {fileID: 0}
+    - target: {fileID: 7517855190123719870, guid: af053711d1c59af448859cdc71963f58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af053711d1c59af448859cdc71963f58, type: 3}
 --- !u!4 &3536594198369869191 stripped
@@ -428,6 +519,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FamilyPlaceRay
+      objectReference: {fileID: 0}
+    - target: {fileID: 863390229359166288, guid: 501bb6528773ad546af2cce3231af162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3152303994780568318, guid: 501bb6528773ad546af2cce3231af162,
         type: 3}

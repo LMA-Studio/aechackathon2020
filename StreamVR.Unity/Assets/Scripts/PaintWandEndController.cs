@@ -19,6 +19,10 @@ public class PaintWandEndController : MonoBehaviour
     public void SelectMaterial (Material selectedMaterial)
     {
         this.GetComponent<MeshRenderer>().material = selectedMaterial;
+
+        GameObject parent = this.transform.parent.gameObject;
+        ShootingPaintScript paintShooter = parent.GetComponent<ShootingPaintScript>();
+        paintShooter.ChangePaint(selectedMaterial);
     }
 
     private void OnCollisionEnter(Collision collision)

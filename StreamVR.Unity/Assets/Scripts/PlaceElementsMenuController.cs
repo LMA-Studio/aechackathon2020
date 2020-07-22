@@ -32,7 +32,14 @@ public class PlaceElementsMenuController : MonoBehaviour
     {
         if (!isLoaded)
         {
-            allElements = FamilyLibrary.GetFamiliesForTag(filterTag);
+            allElements = FamilyLibrary.GetFamiliesForTag(filterTag).Where(f =>
+            {
+                double xDif = f.BoundingBoxMax.X - f.BoundingBoxMin.X;
+                double yDif = f.BoundingBoxMax.Y - f.BoundingBoxMin.Y;
+                double zDif = f.BoundingBoxMax.Z - f.BoundingBoxMin.Z;
+
+                return xDif != 0 && yDif != 0 && zDif != 0;
+            });
             isLoaded = allElements.Count() > 0;
 
             if (isLoaded)
@@ -56,6 +63,9 @@ public class PlaceElementsMenuController : MonoBehaviour
         {
             GameObject.Destroy(child.gameObject);
         }
+
+        nextButton.interactable = true;
+        previousButton.interactable = true;
     }
 
     private void RenderPage ()
@@ -68,11 +78,12 @@ public class PlaceElementsMenuController : MonoBehaviour
         if (pageNumber <= 0)
         {
             previousButton.interactable = false;
+            nextButton.interactable = true;
             pageNumber = 0;
         }
-
-        else if(pageNumber >= totalPages)
+        else if (pageNumber >= totalPages)
         {
+            previousButton.interactable = true;
             nextButton.interactable = false;
             pageNumber = totalPages;
         }

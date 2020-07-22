@@ -151,6 +151,8 @@ MonoBehaviour:
   MoveMenu: {fileID: 4022703505499258776}
   Wand: {fileID: 0}
   MoveRay: {fileID: 0}
+  PlaceRay: {fileID: 0}
+  DeleteRay: {fileID: 0}
 --- !u!114 &2761996508107648911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -674,6 +676,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4725943725710794434}
     m_Modifications:
+    - target: {fileID: 14870817804943411, guid: 0a6fe572fbc20a849aa1aac6ae4c8525,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6078286593468233757}
+    - target: {fileID: 14870817804943411, guid: 0a6fe572fbc20a849aa1aac6ae4c8525,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ActivateMoveRay
+      objectReference: {fileID: 0}
     - target: {fileID: 917802909400742802, guid: 0a6fe572fbc20a849aa1aac6ae4c8525,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -798,6 +810,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6427597984902678089, guid: 0a6fe572fbc20a849aa1aac6ae4c8525,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6078286593468233757}
+    - target: {fileID: 6427597984902678089, guid: 0a6fe572fbc20a849aa1aac6ae4c8525,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ActivateDeleteRay
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a6fe572fbc20a849aa1aac6ae4c8525, type: 3}

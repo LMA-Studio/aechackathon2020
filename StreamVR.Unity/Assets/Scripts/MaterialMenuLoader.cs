@@ -56,19 +56,19 @@ public class MaterialMenuLoader : MonoBehaviour
        
         if (pageNumber <= 0)
         {
-            previousButton.interactable = false;
+            previousButton.enabled = false;
             pageNumber = 0;
         }
 
         else if(pageNumber >= totalPages)
         {
-            nextButton.interactable = false;
+            nextButton.enabled = false;
             pageNumber = totalPages;
         }
-        else if (!previousButton.interactable || !nextButton.interactable)
+        else if (!previousButton.enabled || !nextButton.enabled)
         {
-            nextButton.interactable = true;
-            previousButton.interactable = true;
+            nextButton.enabled = true;
+            previousButton.enabled = true;
         }
 
         this.CreateButtons();

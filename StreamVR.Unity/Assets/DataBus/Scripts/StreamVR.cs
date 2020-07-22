@@ -307,6 +307,17 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             return JObject.Parse(response.Data).ToObject<FamilyInstance>();
         }
 
+        public IEnumerator DeleteFamilyInstance(FamilyInstance fam)
+        {
+            Debug.Log($"Deleting {fam.FamilyId}");
+
+            yield return this.ServerRequestCoroutine(new Message
+            {
+                Type = "DELETE",
+                Data = JsonConvert.SerializeObject(fam)
+            });
+        }
+
         public void PaintFace(Face newFace)
         {
             Debug.Log($"Updating material {newFace.ElementId} {newFace.FaceIndex} {newFace.MaterialId}");

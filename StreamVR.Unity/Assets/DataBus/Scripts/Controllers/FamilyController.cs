@@ -42,6 +42,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         private bool ignoreNextDifference = false;
 
         private string creatingFamilyId = null;
+        private bool shouldDelete = false;
 
         void Update()
         {
@@ -56,6 +57,18 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 StartCoroutine(PlaceFamily(creatingFamilyId));
                 creatingFamilyId = null;
             }
+
+            if (shouldDelete)
+            {
+                StartCoroutine(DeleteSelf());
+                shouldDelete = false;
+            }
+        }
+
+        public void MarkForDeletion()
+        {
+            Debug.Log("DELETIN!!");
+            shouldDelete = true;
         }
 
         public void InitPlaceFamily(string familyId)
@@ -72,6 +85,24 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                     FamilyId = familyId,
                     Transform = new Common.Models.Transform
                     {
+                        BasisX = new XYZ
+                        {
+                            X = this.transform.right.x,
+                            Y = this.transform.right.z,
+                            Z = this.transform.right.y
+                        },
+                        BasisY = new XYZ
+                        {
+                            X = this.transform.forward.x,
+                            Y = this.transform.forward.z,
+                            Z = this.transform.forward.y
+                        },
+                        BasisZ = new XYZ
+                        {
+                            X = this.transform.up.x,
+                            Y = this.transform.up.z,
+                            Z = this.transform.up.y
+                        },
                         Origin = new XYZ
                         {
                             X = this.transform.position.x * Helpers.Constants.FT_PER_M,
@@ -95,6 +126,13 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             {
                 Debug.LogError($"Can't create family from missing ID {familyId}");
             }
+        }
+
+        private IEnumerator DeleteSelf()
+        {
+            Debug.Log("DELETING SELF");
+            yield return StreamVR.Instance.DeleteFamilyInstance(this.instanceData);
+            GameObject.Destroy(this.gameObject);
         }
 
         public FamilyInstance GetInstanceData()

@@ -29,6 +29,9 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         private bool colliderFloorHit = false;
 
+        // Ensure that activation click doesn't pass through to hovered object
+        private bool haltAction = true;
+
         private void Awake()
         {
             lineRenderer = GetComponent<LineRenderer>();
@@ -66,7 +69,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 bool clicked;
                 device.TryGetFeatureValue(CommonUsages.triggerButton, out clicked);
 
-                if (clicked)
+                if (clicked && !haltAction)
                 {
                     Debug.Log("CLICKED " + clicking.ToString() + "," + inHand.ToString() + "," + colliderFloorHit.ToString());
                     if (!clicking)
@@ -106,6 +109,27 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             {
                 Cancel();
             }
+        }
+
+        public void WakeUpPointer()
+        {
+            this.haltAction = true;
+            this.gameObject.SetActive(true);
+            this.Cancel();
+            StartCoroutine(WakeUp());
+        }
+
+        private IEnumerator WakeUp()
+        {
+            yield return new WaitForSeconds(2f);
+            this.haltAction = false;
+        }
+
+        public void SleepPointer()
+        {
+            this.haltAction = true;
+            this.Cancel();
+            this.gameObject.SetActive(false);
         }
 
         private void PickUp()
@@ -183,14 +207,14 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             if (selectedObject != null && inHand)
             {
                 GameObject.Destroy(selectedObject);
-
-                selectedObject = null;
-                originalObjectController = null;
-                origionalObject = null;
-
-                currentRotation = Quaternion.identity;
-                inHand = false;
             }
+
+            selectedObject = null;
+            originalObjectController = null;
+            origionalObject = null;
+
+            currentRotation = Quaternion.identity;
+            inHand = false;
         }
 
         private Vector3 CalculatedEnd()
@@ -198,12 +222,13 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             RaycastHit hit = CreateForwardRaycast();
             Vector3 endPosition = DefaultEnd(defaultLength);
 
-            if (hit.collider)
+            if (hit.collider && !haltAction)
             {
                 Debug.Log("COLLIDING");
                 selectedObject = hit.transform.gameObject;
+                endPosition = hit.point;
             }
-            else if (selectedObject != null)
+            else
             {
                 selectedObject = null;
             }
@@ -231,7 +256,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
             Ray ray = new Ray(transform.position, transform.forward);
 
-            Physics.Raycast(ray, out hit, defaultLength, 1 << Helpers.Constants.LAYER_FAMILY);
+            int layerMask = 1 << Helpers.Constants.LAYER_FAMILY;
+            Physics.Raycast(ray, out hit, defaultLength, layerMask);
 
             return hit;
         }

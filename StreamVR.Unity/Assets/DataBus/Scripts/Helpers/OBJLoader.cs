@@ -258,20 +258,20 @@ namespace LMAStudio.StreamVR.Unity.Helpers
 
             foreach(Vector3 light in Lights)
             {
-                GameObject lightObject = new GameObject("LightSource");
+                // GameObject lightObject = new GameObject("LightSource");
 
-                Light l = lightObject.AddComponent<Light>();
-                l.type = LightType.Spot;
-                l.range = 10;
-                l.spotAngle = 90;
-                l.innerSpotAngle = 60;
-                l.intensity = 3;
-                l.shadows = LightShadows.Soft;
+                // Light l = lightObject.AddComponent<Light>();
+                // l.type = LightType.Spot;
+                // l.range = 10;
+                // l.spotAngle = 90;
+                // l.innerSpotAngle = 60;
+                // l.intensity = 3;
+                // l.shadows = LightShadows.Soft;
 
-                lightObject.transform.position = light;
-                lightObject.transform.SetParent(obj.transform, false);
-                lightObject.transform.rotation = Quaternion.LookRotation(Vector3.down);
-                lightObject.transform.position += new Vector3(0, 0.01f, 0);
+                // lightObject.transform.position = light;
+                // lightObject.transform.SetParent(obj.transform, false);
+                // lightObject.transform.rotation = Quaternion.LookRotation(Vector3.down);
+                // lightObject.transform.position += new Vector3(0, 0.01f, 0);
             }
 
             return obj;

@@ -238,4 +238,4 @@ MonoBehaviour:
   inputSource: 5
   defaultLength: 5
   defaultLengthPlace: 10
-  rotationSpeed: 1
+  rotationSpeed: 3
