@@ -20,6 +20,7 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
         private IBaseCommand Command_Paint;
         private IBaseCommand Command_Create;
         private IBaseCommand Command_Export;
+        private IBaseCommand Command_Delete;
 
         private Application application;
 
@@ -43,6 +44,7 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
             this.Command_Paint = new Paint(Debug, this.Converter);
             this.Command_Create = new Create(Debug, this.Converter);
             this.Command_Export = new Export(Debug, this.Converter);
+            this.Command_Delete = new Delete(Debug, this.Converter);
 
             Message request = StreamVRApp.Instance.CurrentRequest;
 
@@ -142,6 +144,8 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
                         return this.Command_Paint.Execute(doc, msg);
                     case "CREATE":
                         return this.Command_Create.Execute(doc, msg);
+                    case "DELETE":
+                        return this.Command_Delete.Execute(doc, msg);
                     case "EXPORT":
                         return this.Command_Export.Execute(doc, msg);
                     case "EXPORT_ALL":

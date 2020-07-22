@@ -148,10 +148,11 @@ namespace LMAStudio.StreamVR.Revit.Conversions
                 throw new Exception($"Failed to find family with id {famI.FamilyId}");
             }
 
+            Autodesk.Revit.DB.FamilyInstance newFamily;
             if (famI.HostId != null)
             {
                 ElementId hostId = new ElementId(Int32.Parse(famI.HostId));
-                return doc.Create.NewFamilyInstance(
+                newFamily = doc.Create.NewFamilyInstance(
                     newOrigin,
                     fam,
                     doc.GetElement(hostId),
@@ -160,12 +161,24 @@ namespace LMAStudio.StreamVR.Revit.Conversions
             }
             else
             {
-                return doc.Create.NewFamilyInstance(
+                newFamily = doc.Create.NewFamilyInstance(
                     newOrigin,
                     fam,
                     StructuralType.NonStructural
                 );
             }
+
+            Autodesk.Revit.DB.Transform trans = newFamily.GetTransform();
+
+            double rotation = Math.Atan2(famI.Transform.BasisX.Y, famI.Transform.BasisX.X);
+
+            Autodesk.Revit.DB.XYZ a1 = newOrigin;
+            Autodesk.Revit.DB.XYZ a2 = new Autodesk.Revit.DB.XYZ(a1.X, a1.Y, a1.Z + 10);
+            Line axis = Line.CreateBound(a1, a2);
+
+            newFamily.Location.Rotate(axis, rotation);
+
+            return newFamily;
         }
 
     }
