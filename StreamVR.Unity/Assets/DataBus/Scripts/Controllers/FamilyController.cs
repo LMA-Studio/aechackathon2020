@@ -41,7 +41,29 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         private List<string> hostableInteractions = new List<string>();
         private bool ignoreNextDifference = false;
 
-        public IEnumerator PlaceFamily(string familyId)
+        private string creatingFamilyId = null;
+
+        void Update()
+        {
+            if (currentPostion == null || currentRotation == null)
+            {
+                currentPostion = this.transform.position;
+                currentRotation = this.transform.rotation;
+            }
+
+            if (creatingFamilyId != null)
+            {
+                StartCoroutine(PlaceFamily(creatingFamilyId));
+                creatingFamilyId = null;
+            }
+        }
+
+        public void InitPlaceFamily(string familyId)
+        {
+            this.creatingFamilyId = familyId;
+        }
+
+        private IEnumerator PlaceFamily(string familyId)
         {
             if (FamilyLibrary.GetFamily(familyId) != null)
             {
@@ -61,32 +83,13 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
                 Debug.Log($"Requesting new family");
 
-                CoroutineWithData<FamilyInstance> cd = new CoroutineWithData<FamilyInstance>(
-                    this,
-                    StreamVR.Instance.PlaceFamilyInstance(this, newFam)
-                );
-                yield return cd.coroutine;
-                newFam = cd.result;
+                newFam = StreamVR.Instance.PlaceFamilyInstance(newFam);
 
-                Debug.Log($"New family response");
-                Debug.Log(JsonConvert.SerializeObject(newFam));
+                Debug.Log($"Loading family instance");
 
-                this.instanceData = newFam;
-                this.InstanceData = Newtonsoft.Json.JsonConvert.SerializeObject(newFam);
-                this.fam = FamilyLibrary.GetFamily(newFam.FamilyId);
+                yield return this.LoadInstance(newFam);
 
-                this.transform.SetPosition(instanceData.Transform);
-
-                if (newFam.HostId != null)
-                {
-                    this.host = GeometryLibrary.GetObject(newFam.HostId);
-                }
-
-#if UNITY_EDITOR
-                this.name = $"Family ({newFam.Id} - {this.fam.Tag} - {this.fam.ModelName ?? this.fam.FamilyName})";
-#else
-                this.name = newFam.Id;
-#endif
+                FamilyInstanceLibrary.AddFamily(newFam, this.gameObject);
             }
             else
             {
@@ -202,15 +205,6 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         private Vector3? currentPostion = null;
         private Quaternion? currentRotation = null;
-
-        void Update()
-        {
-            if (currentPostion == null || currentRotation == null)
-            {
-                currentPostion = this.transform.position;
-                currentRotation = this.transform.rotation;
-            }
-        }
 
         private IEnumerator CheckForUpdate()
         {

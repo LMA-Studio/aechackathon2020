@@ -292,25 +292,19 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             famObj.SetActive(true);
         }
 
-        public IEnumerator PlaceFamilyInstance(FamilyController behaviour, FamilyInstance fam)
+        public FamilyInstance PlaceFamilyInstance(FamilyInstance fam)
         {
             Debug.Log($"Placing {fam.FamilyId}");
 
-            CoroutineWithData<Message> cd = new CoroutineWithData<Message>(
-                behaviour,
-                this.ServerRequestCoroutine(new Message
-                {
-                    Type = "CREATE",
-                    Data = JsonConvert.SerializeObject(fam)
-                })
-            );
-            yield return cd.coroutine;
-
-            Message response = cd.result;
+            Message response = this.ServerRequest(new Message
+            {
+                Type = "CREATE",
+                Data = JsonConvert.SerializeObject(fam)
+            });
 
             Debug.Log(JsonConvert.SerializeObject(response));
 
-            yield return JObject.Parse(response.Data).ToObject<FamilyInstance>();
+            return JObject.Parse(response.Data).ToObject<FamilyInstance>();
         }
 
         public void PaintFace(Face newFace)
@@ -404,11 +398,15 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
                 totalIteration++;
 
+                Debug.Log($"Waiting for response {totalIteration}");
+
                 if (totalIteration > 100)
                 {
                     break;
                 }
             }
+
+            Debug.Log($"Result {requestTask.IsCompleted} {requestTask.IsFaulted} {requestTask.IsCanceled}");
 
             if (totalIteration <= 100)
             {
@@ -416,6 +414,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             }
             else
             {
+                Debug.LogError("TIMED OUT WAITING FOR REVIT RESPONSE");
                 yield return null;
             }
         }

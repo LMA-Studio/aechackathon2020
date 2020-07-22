@@ -1,4 +1,5 @@
 ﻿using LMAStudio.StreamVR.Common.Models;
+using LMAStudio.StreamVR.Unity.Logic;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -101,11 +102,15 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         {
             Debug.Log("CREATING OBJECT!");
 
-            placingObject.transform.parent = worldRoot.transform;
+            GameObject placedObject = new GameObject();
+            placedObject.transform.position = placingObject.transform.position;
+            placedObject.transform.rotation = placingObject.transform.rotation;
+            placedObject.transform.parent = worldRoot.transform;
 
-            FamilyController controller = placingObject.AddComponent<FamilyController>();
-            StartCoroutine(controller.PlaceFamily(familyDef.Id));
+            placedObject.layer = Helpers.Constants.LAYER_FAMILY;
+            placedObject.AddComponent<FamilyController>().InitPlaceFamily(familyDef.Id);
 
+            Destroy(placingObject);
             placingObject = null;
             familyDef = null;
             currentRotation = Quaternion.identity;

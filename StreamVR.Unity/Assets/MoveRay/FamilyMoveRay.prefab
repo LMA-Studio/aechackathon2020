@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 5192811346196522256}
   - component: {fileID: 7070027108960930228}
   - component: {fileID: 1609225329170201073}
-  - component: {fileID: 1690521510593313551}
   - component: {fileID: 7346234560420897200}
   - component: {fileID: 3296620398347299861}
+  - component: {fileID: 1690521510593313551}
   m_Layer: 0
   m_Name: FamilyMoveRay
   m_TagString: Untagged
@@ -94,23 +94,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
---- !u!114 &1690521510593313551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7517855190123719870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eb22f29962fc2340821aa4f069182c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ghostMaterial: {fileID: 2100000, guid: 7134733b7080a4f4d94e9259648bc845, type: 2}
-  inputSource: 5
-  defaultLength: 5
-  defaultLengthPlace: 10
-  rotationSpeed: 1
 --- !u!114 &7346234560420897200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,3 +222,20 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &1690521510593313551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7517855190123719870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eb22f29962fc2340821aa4f069182c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostMaterial: {fileID: 2100000, guid: 7134733b7080a4f4d94e9259648bc845, type: 2}
+  inputSource: 5
+  defaultLength: 5
+  defaultLengthPlace: 10
+  rotationSpeed: 1

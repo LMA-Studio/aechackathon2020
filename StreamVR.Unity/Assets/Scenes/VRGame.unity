@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1244,6 +1244,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1549879056512298515, guid: b6ed7b61a97666d47bb9443390680261,
     type: 3}
   m_PrefabInstance: {fileID: 1549879057173037845}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &731756286 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1039078416529444567, guid: abd54a996701d2444b26d4d5fffef98c,
+    type: 3}
+  m_PrefabInstance: {fileID: 401110499}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &824033322
 GameObject:
@@ -2636,6 +2642,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: VR Rig
       objectReference: {fileID: 0}
+    - target: {fileID: 1549879056512298520, guid: b6ed7b61a97666d47bb9443390680261,
+        type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 4608
+      objectReference: {fileID: 0}
     - target: {fileID: 1549879056512298525, guid: b6ed7b61a97666d47bb9443390680261,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2716,6 +2727,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 1553065253}
+    - target: {fileID: 1549879057181670098, guid: b6ed7b61a97666d47bb9443390680261,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 32563
+      objectReference: {fileID: 0}
     - target: {fileID: 1619066294161578381, guid: b6ed7b61a97666d47bb9443390680261,
         type: 3}
       propertyPath: m_RootOrder
@@ -2926,6 +2942,11 @@ PrefabInstance:
       propertyPath: m_Colors.m_PressedColor.b
       value: 0.8235294
       objectReference: {fileID: 0}
+    - target: {fileID: 4132079764341838623, guid: b6ed7b61a97666d47bb9443390680261,
+        type: 3}
+      propertyPath: worldRoot
+      value: 
+      objectReference: {fileID: 731756286}
     - target: {fileID: 4142482920539144673, guid: b6ed7b61a97666d47bb9443390680261,
         type: 3}
       propertyPath: m_textInfo.characterCount
