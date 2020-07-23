@@ -29,9 +29,6 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         private bool colliderFloorHit = false;
 
-        // Ensure that activation click doesn't pass through to hovered object
-        private bool haltAction = true;
-
         private void Awake()
         {
             lineRenderer = GetComponent<LineRenderer>();
@@ -69,7 +66,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 bool clicked;
                 device.TryGetFeatureValue(CommonUsages.triggerButton, out clicked);
 
-                if (clicked && !haltAction)
+                if (clicked)
                 {
                     Debug.Log("CLICKED " + clicking.ToString() + "," + inHand.ToString() + "," + colliderFloorHit.ToString());
                     if (!clicking)
@@ -109,27 +106,6 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             {
                 Cancel();
             }
-        }
-
-        public void WakeUpPointer()
-        {
-            this.haltAction = true;
-            this.gameObject.SetActive(true);
-            this.Cancel();
-            StartCoroutine(WakeUp());
-        }
-
-        private IEnumerator WakeUp()
-        {
-            yield return new WaitForSeconds(2f);
-            this.haltAction = false;
-        }
-
-        public void SleepPointer()
-        {
-            this.haltAction = true;
-            this.Cancel();
-            this.gameObject.SetActive(false);
         }
 
         private void PickUp()
@@ -222,7 +198,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             RaycastHit hit = CreateForwardRaycast();
             Vector3 endPosition = DefaultEnd(defaultLength);
 
-            if (hit.collider && !haltAction)
+            if (hit.collider)
             {
                 Debug.Log("COLLIDING");
                 selectedObject = hit.transform.gameObject;

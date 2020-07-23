@@ -7,6 +7,9 @@ public class LocomotionController : MonoBehaviour
 {
     public XRController leftTeleportRay;
     public XRController rightTeleportRay;
+    public GameObject deleteRay;
+    public GameObject moveRay;
+    public GameObject placeRay;
 
     public InputHelpers.Button teleportActivationButton;
     public float activationThreshold = 0.1f;
@@ -15,6 +18,9 @@ public class LocomotionController : MonoBehaviour
     public XRRayInteractor rightInteractorRay;
     public bool enableLeftTeleport {get; set;} = true;
     public bool enableRightTeleport {get; set;}  = true;
+    public bool enableDeleteRay {get; set;}  = false;
+    public bool enableMoveRay {get; set;}  = false;
+    public bool enablePlaceRay {get; set;}  = false;
 
     // Update is called once per frame
     void Update()
@@ -34,6 +40,24 @@ public class LocomotionController : MonoBehaviour
         {
             bool isRightInteractorRayHovering = rightInteractorRay.TryGetHitInfo(ref pos, ref norm, ref index, ref validTarget);
             rightTeleportRay.gameObject.SetActive(enableRightTeleport && CheckIfActivated(rightTeleportRay) && !isRightInteractorRayHovering);
+        }
+
+        if(deleteRay)
+        {
+            bool isRightInteractorRayHovering = rightInteractorRay.TryGetHitInfo(ref pos, ref norm, ref index, ref validTarget);
+            deleteRay.gameObject.SetActive(enableDeleteRay && !isRightInteractorRayHovering);
+        }
+
+        if(moveRay)
+        {
+            bool isRightInteractorRayHovering = rightInteractorRay.TryGetHitInfo(ref pos, ref norm, ref index, ref validTarget);
+            moveRay.gameObject.SetActive(enableMoveRay && !isRightInteractorRayHovering);
+        }
+
+        if(placeRay)
+        {
+            bool isRightInteractorRayHovering = rightInteractorRay.TryGetHitInfo(ref pos, ref norm, ref index, ref validTarget);
+            placeRay.gameObject.SetActive(enablePlaceRay && !isRightInteractorRayHovering);
         }
 
     }

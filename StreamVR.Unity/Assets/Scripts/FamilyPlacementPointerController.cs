@@ -13,6 +13,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         public float defaultLengthPlace = 10.0f;
         public float rotationSpeed = 1.0f;
 
+        public GameObject placemenu;
+
         private LineRenderer lineRenderer = null;
 
         private GameObject placingObject = null;
@@ -116,6 +118,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             currentRotation = Quaternion.identity;
 
             this.gameObject.SetActive(false);
+            placemenu.gameObject.SetActive(true);
         }
 
         private void Cancel()

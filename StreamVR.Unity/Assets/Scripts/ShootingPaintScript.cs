@@ -57,7 +57,7 @@ public class ShootingPaintScript : MonoBehaviour
     public void Fire()
     {
         GameObject spawnedPaint = Instantiate(paintBlob, barrel.position, barrel.rotation);
-        spawnedPaint.GetComponent<Rigidbody>().velocity = speed * barrel.up;
+        spawnedPaint.GetComponent<Rigidbody>().velocity = speed * barrel.forward;
         audioSource.PlayOneShot(audioClip);
         Destroy(spawnedPaint, 2);
     }

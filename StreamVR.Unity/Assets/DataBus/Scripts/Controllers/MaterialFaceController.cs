@@ -44,31 +44,18 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         }
 
-        private void Update()
-        {
-            UnityEngine.Material attachedMaterial = this.GetComponent<MeshRenderer>().material;
-            if (attachedMaterial != null && currentMaterial != null)
-            {
-                int index = attachedMaterial.name.IndexOf("(") - 1;
-                string attachedMaterialName = attachedMaterial.name.Substring(0, index);
-                if (attachedMaterialName != currentMaterial.Name)
-                {
-                    Debug.Log("instance id = " + attachedMaterialName + "," + currentMaterial.Name);
-                    currentMaterial = MaterialLibrary.ReverseGetMaterial(attachedMaterialName);
-                    instanceData.MaterialId = currentMaterial.Id;
-                    StreamVR.Instance.PaintFace(instanceData);
-                }
-            }
-        }
-
         private void OnCollisionEnter(Collision collision)
         {
             if (collision.gameObject.tag == "paint")
             {
                 Debug.Log(collision.gameObject.name);
-
-                this.GetComponent<MeshRenderer>().material = collision.gameObject.GetComponent<MeshRenderer>().material;
+                var mat = collision.gameObject.GetComponent<MeshRenderer>().material;
+                this.GetComponent<MeshRenderer>().material = mat;
                 Destroy(collision.gameObject);
+                
+                currentMaterial = MaterialLibrary.ReverseGetMaterial(mat.name);
+                instanceData.MaterialId = currentMaterial.Id;
+                StreamVR.Instance.PaintFace(instanceData);
             }
         }
     }

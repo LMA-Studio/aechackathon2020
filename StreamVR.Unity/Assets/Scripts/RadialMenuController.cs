@@ -12,17 +12,22 @@ public class RadialMenuController : MonoBehaviour
     public GameObject PaletteMenu;
     public GameObject MoveMenu;
     public GameObject Wand;
-    public FamilyMovementPointerController MoveRay;
+    public GameObject MoveRay;
     public GameObject PlaceRay;
     public GameObject DeleteRay;
+
+    public GameObject PlaceSelectMenu;
+    public GameObject PaintSelectMenu;
+
+    public LocomotionController locomotionController;
 
     // Start is called before the first frame update
     void Start()
     {
         this.ShowGenMenu();
-        MoveRay.SleepPointer();
-        PlaceRay.SetActive(false);
-        DeleteRay.SetActive(false);
+        locomotionController.enableMoveRay = false;
+        locomotionController.enablePlaceRay = false;
+        locomotionController.enableDeleteRay = false;
     }
 
     // Update is called once per frame
@@ -43,14 +48,14 @@ public class RadialMenuController : MonoBehaviour
 
     public void ActivateMoveRay()
     {
-        MoveRay.WakeUpPointer();
-        DeleteRay.SetActive(false);
+        locomotionController.enableMoveRay = true;
+        locomotionController.enableDeleteRay = false;
     }
 
     public void ActivateDeleteRay()
     {
-        DeleteRay.SetActive(true);
-        MoveRay.SleepPointer();
+        locomotionController.enableDeleteRay = true;
+        locomotionController.enableMoveRay = false;
     }
 
     public void ShowPlaceMenu()
@@ -59,9 +64,9 @@ public class RadialMenuController : MonoBehaviour
         PaletteMenu.SetActive(false);
         Wand.SetActive(false);
         MoveMenu.SetActive(false);
-        MoveRay.SleepPointer();
-        DeleteRay.SetActive(false);
-        PlaceRay.SetActive(false);
+        locomotionController.enableMoveRay = false;
+        locomotionController.enableDeleteRay = false;
+        locomotionController.enablePlaceRay = true;
         PlaceMenu.SetActive(true);
 
     }
@@ -72,9 +77,11 @@ public class RadialMenuController : MonoBehaviour
         Wand.SetActive(false);
         PlaceMenu.SetActive(false);
         MoveMenu.SetActive(false);
-        MoveRay.SleepPointer();
-        PlaceRay.SetActive(false);
-        DeleteRay.SetActive(false);
+        PlaceSelectMenu.SetActive(false);
+        PaintSelectMenu.SetActive(false);
+        locomotionController.enableMoveRay = false;
+        locomotionController.enablePlaceRay = false;
+        locomotionController.enableDeleteRay = false;
         GeneralMenu.SetActive(true);
     }
 
@@ -83,9 +90,9 @@ public class RadialMenuController : MonoBehaviour
         GeneralMenu.SetActive(false);
         PlaceMenu.SetActive(false);
         MoveMenu.SetActive(false);
-        MoveRay.SleepPointer();
-        PlaceRay.SetActive(false);
-        DeleteRay.SetActive(false);
+        locomotionController.enableMoveRay = false;
+        locomotionController.enablePlaceRay = false;
+        locomotionController.enableDeleteRay = false;
         PaletteMenu.SetActive(true);
         Wand.SetActive(true);
 

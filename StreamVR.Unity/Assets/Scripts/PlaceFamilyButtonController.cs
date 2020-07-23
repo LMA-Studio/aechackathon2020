@@ -91,6 +91,7 @@ public class PlaceFamilyButtonController : MonoBehaviour
     { 
         var placePointer = Resources.FindObjectsOfTypeAll(typeof(FamilyPlacementPointerController)).First() as FamilyPlacementPointerController;
         placePointer.BeginPlacing(modelInstance, buttonFamilyData);
+        this.transform.parent.parent.parent.gameObject.SetActive(false);
     }
 
     private string FormatName (string Name)
