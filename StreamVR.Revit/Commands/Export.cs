@@ -51,6 +51,16 @@ namespace LMAStudio.StreamVR.Revit.Commands
             FamilySymbol family = doc.GetElement(new ElementId(Int32.Parse(elementId))) as FamilySymbol;
 
             GeometryElement geometry = family.get_Geometry(new Options());
+
+            if (geometry == null)
+            {
+                return new Message
+                {
+                    Type = "EMPTY",
+                    Data = $"No geometry found for family: {family.Name} ({family.Id})"
+                };
+            }
+
             byte[] file_bytes = GeometryToOBJ(doc, geometry);
 
             try
@@ -98,8 +108,11 @@ namespace LMAStudio.StreamVR.Revit.Commands
                         continue;
                     }
                     GeometryElement variantInstanceGeometry = variantInstance.GetSymbolGeometry();
-                    byte[] variantFileBytes = GeometryToOBJ(doc, variantInstanceGeometry);
-                    uploadTasks.Add(Task.Run(() => UploadOBJVariant(dto.FamilyId, kv.Key.ToString(), variantFileBytes)));
+                    if (variantInstanceGeometry != null)
+                    {
+                        byte[] variantFileBytes = GeometryToOBJ(doc, variantInstanceGeometry);
+                        uploadTasks.Add(Task.Run(() => UploadOBJVariant(dto.FamilyId, kv.Key.ToString(), variantFileBytes)));
+                    }
                 }
 
                 Task.WaitAll(uploadTasks.ToArray());
@@ -148,15 +161,16 @@ namespace LMAStudio.StreamVR.Revit.Commands
                     bool isLightSource = gs?.GraphicsStyleCategory?.Name == "Light Source";
                     if (isLightSource)
                     {
-                        XYZ centroid = solid.GetBoundingBox().Transform.Origin;
-                        fullObjectSB.Append($"ls {centroid.X} {centroid.Z} {centroid.Y}\n");
+                        XYZ centroid = solid.GetBoundingBox()?.Transform?.Origin;
+                        if (centroid != null)
+                        {
+                            fullObjectSB.Append($"ls {centroid.X} {centroid.Z} {centroid.Y}\n");
+                        }
                         continue;
                     }
                 }
 
-
                 fullObjectSB.Append($"g GeometryPart{part}\n");
-
 
                 bool addedMaterial = false;
                 IEnumerable<Face> faces = solid.Faces.Cast<Face>();

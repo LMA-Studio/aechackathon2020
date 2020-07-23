@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const multer  = require('multer');
 require('dotenv').config();
 require('./server/logic/modelsList').load();
+require('./server/logic/materialsList').load();
 
 const upload = multer({ dest: 'temp/' });
 const app = express();
@@ -40,6 +41,9 @@ app.post(BASE_PATH, require('./server/routes/home/post'));
 
 app.get(BASE_PATH + '/api/model/:name', require('./server/routes/api/model/get'));
 app.post(BASE_PATH + '/api/model/:name', upload.single('file'), require('./server/routes/api/model/post'));
+
+app.get(BASE_PATH + '/api/material/:name', require('./server/routes/api/material/get'));
+app.post(BASE_PATH + '/api/material/:name', upload.single('file'), require('./server/routes/api/material/post'));
 
 // Fallback to 404
 app.get(BASE_PATH + '/404', require('./server/routes/404/get'));

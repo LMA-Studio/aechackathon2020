@@ -20,6 +20,7 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
         private IBaseCommand Command_Paint;
         private IBaseCommand Command_Create;
         private IBaseCommand Command_Export;
+        private IBaseCommand Command_ExportMaterial;
         private IBaseCommand Command_Delete;
 
         private Application application;
@@ -44,6 +45,7 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
             this.Command_Paint = new Paint(Debug, this.Converter);
             this.Command_Create = new Create(Debug, this.Converter);
             this.Command_Export = new Export(Debug, this.Converter);
+            this.Command_ExportMaterial = new ExportMaterial(Debug, this.Converter);
             this.Command_Delete = new Delete(Debug, this.Converter);
 
             Message request = StreamVRApp.Instance.CurrentRequest;
@@ -60,7 +62,7 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
             return "StreamVR Message Handler";
         }
 
-        private Message ExportAll(Document doc, Message msg)
+        private Message ExportAll(Document doc)
         {
             IEnumerable<string> families = new FilteredElementCollector(doc).
                             OfClass(typeof(FamilySymbol)).
@@ -85,13 +87,17 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
                         })
                     });
 
+                    if (response.Type == "ERROR")
+                    {
+                        throw new Exception(response.Data);
+                    }
+
                     Debug(response.Data);
                     success++;
                 }
                 catch (Exception e)
                 {
                     Debug($"Error 2 {id} {e.ToString()}");
-
                     failure++;
                 }
             }
@@ -108,6 +114,72 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
                 Data = JsonConvert.SerializeObject(new
                 {
                     Successes = success,
+                    Failures = failure
+                })
+            };
+        }
+
+        private Message ExportAllMaterials(Document doc)
+        {
+            IEnumerable<string> materials = new FilteredElementCollector(doc).
+                            OfClass(typeof(Material)).
+                            Select(e => e.Id.ToString());
+
+            int success = 0;
+            int noMaterial = 0;
+            int failure = 0;
+
+            Debug("EXPORTING " + materials.Count() + " MATERIALS");
+
+            foreach (string id in materials)
+            {
+                try
+                {
+                    Message response = this.Command_ExportMaterial.Execute(doc, new Message
+                    {
+                        Type = "EXPORT_MATERIAL",
+                        Reply = null,
+                        Data = JsonConvert.SerializeObject(new
+                        {
+                            Id = id
+                        })
+                    });
+
+                    if (response.Type == "EMPTY")
+                    {
+                        noMaterial++;
+                        continue;
+                    }
+
+                    if (response.Type == "ERROR")
+                    {
+                        throw new Exception(response.Data);
+                    }
+
+                    Debug(response.Data);
+                    success++;
+                }
+                catch (Exception e)
+                {
+                    Debug($"Error 2 {id} {e.ToString()}");
+                    failure++;
+                }
+            }
+
+            Debug("EXPORT RESULTS " + JsonConvert.SerializeObject(new
+            {
+                Successes = success,
+                NoExportable = noMaterial,
+                Failures = failure
+            }));
+
+            return new Message
+            {
+                Type = "EXPORT_RESULTS",
+                Data = JsonConvert.SerializeObject(new
+                {
+                    Successes = success,
+                    NoExportable = noMaterial,
                     Failures = failure
                 })
             };
@@ -148,8 +220,12 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
                         return this.Command_Delete.Execute(doc, msg);
                     case "EXPORT":
                         return this.Command_Export.Execute(doc, msg);
+                    case "EXPORT_MATERIAL":
+                        return this.Command_ExportMaterial.Execute(doc, msg);
                     case "EXPORT_ALL":
-                        return ExportAll(doc, msg);
+                        return ExportAll(doc);
+                    case "EXPORT_ALL_MATERIALS":
+                        return ExportAllMaterials(doc);
                     case "GET_ORIENTATION":
                         return GetOrientation(doc);
                 }

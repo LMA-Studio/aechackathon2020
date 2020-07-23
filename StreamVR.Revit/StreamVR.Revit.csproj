@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\BaseCommand.cs" />
+    <Compile Include="Commands\ExportMaterial.cs" />
     <Compile Include="Commands\Export.cs" />
     <Compile Include="Commands\Delete.cs" />
     <Compile Include="Commands\Get.cs" />
@@ -73,12 +74,14 @@
     <Compile Include="Conversions\Wall.cs" />
     <Compile Include="Conversions\Material.cs" />
     <Compile Include="EventHandlers\MessageEventHandler.cs" />
+    <Compile Include="RevitCommand\ExportMaterials.cs" />
+    <Compile Include="RevitCommand\ExportFamilies.cs" />
     <Compile Include="WarningSupressor.cs" />
     <Compile Include="Helpers\GeometryConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ribbon.cs" />
     <Compile Include="StreamVRApp.cs" />
-    <Compile Include="StreamingServer.cs" />
+    <Compile Include="RevitCommand\StreamingServer.cs" />
     <Compile Include="WPF\StreamVRUI.xaml.cs">
       <DependentUpon>StreamVRUI.xaml</DependentUpon>
     </Compile>

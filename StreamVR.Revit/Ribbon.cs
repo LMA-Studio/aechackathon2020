@@ -48,34 +48,64 @@ namespace LMAStudio.StreamVR.Revit
             { }
 
             List<RibbonPanel> allRibbonPanels = application.GetRibbonPanels(tabName);
+
+            RibbonPanel intElevPanel = null;
             foreach (RibbonPanel rp in allRibbonPanels)
             {
-
                 if (rp.Name == "Stream Actions")
                 {
-                    AddPushButton(rp, application);
-                    return Result.Succeeded;
+                    intElevPanel = rp;
+                    break;
                 }
-
             }
-            RibbonPanel intElevPanel = application.CreateRibbonPanel(tabName, "Stream Actions");
-            AddPushButton(intElevPanel, application);
+
+            if (intElevPanel == null)
+            {
+                intElevPanel = application.CreateRibbonPanel(tabName, "Stream Actions");
+            }
+
+            AddStreamButton(intElevPanel, application);
+            AddExportButton(intElevPanel, application);
+            AddExportMaterialsButton(intElevPanel, application);
+
             return Result.Succeeded;
 
         }
 
-        private void AddPushButton(RibbonPanel intElevPanel, UIControlledApplication app)
+        private void AddStreamButton(RibbonPanel intElevPanel, UIControlledApplication app)
         {
             var assembly = Assembly.GetCallingAssembly();
             var assemblyDir = new FileInfo(assembly.Location).Directory.FullName;
             var assemblyName = $"{assemblyDir}\\LMAStudio.StreamVR.Revit.dll";
 
-            app.ControlledApplication.WriteJournalComment($"Loading assembly {assemblyName}", false);
-
             PushButtonData intElevButtonData = new PushButtonData("Begin Streaming", "Begin Streaming", assemblyName, "LMAStudio.StreamVR.Revit.StreamingServer");
             PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
 
             placeIntElevButton.ToolTip = "Automatically places interior elevations into all bound rooms";
+        }
+
+        private void AddExportButton(RibbonPanel intElevPanel, UIControlledApplication app)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+            var assemblyDir = new FileInfo(assembly.Location).Directory.FullName;
+            var assemblyName = $"{assemblyDir}\\LMAStudio.StreamVR.Revit.dll";
+
+            PushButtonData intElevButtonData = new PushButtonData("Export Families", "Export Families", assemblyName, "LMAStudio.StreamVR.Revit.ExportFamilies");
+            PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
+
+            placeIntElevButton.ToolTip = "Exports familes to the model server as OBJs";
+        }
+
+        private void AddExportMaterialsButton(RibbonPanel intElevPanel, UIControlledApplication app)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+            var assemblyDir = new FileInfo(assembly.Location).Directory.FullName;
+            var assemblyName = $"{assemblyDir}\\LMAStudio.StreamVR.Revit.dll";
+
+            PushButtonData intElevButtonData = new PushButtonData("Export Materials", "Export Materials", assemblyName, "LMAStudio.StreamVR.Revit.ExportMaterials");
+            PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
+
+            placeIntElevButton.ToolTip = "Exports basic material data to the model server";
         }
 
     }
