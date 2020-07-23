@@ -16,10 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
+using System.Threading.Tasks;
 using LMAStudio.StreamVR.Common.Models;
+using Newtonsoft.Json;
+using UnityEngine.Networking;
 
 namespace LMAStudio.StreamVR.Unity.Logic
 {
@@ -59,6 +63,8 @@ namespace LMAStudio.StreamVR.Unity.Logic
                         mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                         mat.SetShaderPassEnabled("ShadowCaster", false);
                     }
+                    mat.SetFloat("_Metallic", (float)kv.Shininess / byte.MaxValue);
+                    mat.SetFloat("_Smoothness", (float)kv.Smoothness / byte.MaxValue);
                     return mat;
                 }
             );
@@ -119,6 +125,88 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 return null;
             }
             return (UnityEngine.Material)UnityEngine.Resources.Load($"Materials/{mat.Name}/{mat.Name}");
+        }
+
+
+        private static int _totalCalls = 0;
+
+        public static IEnumerator DownloadAllTextures(UnityEngine.MonoBehaviour parent)
+        {
+            foreach(var mat in lib.Keys)
+            {
+                _totalCalls++;
+                parent.StartCoroutine(ResolveMaterialTexture(mat));
+            }
+
+            while (_totalCalls > 0)
+                yield return null;
+        }
+
+        private static IEnumerator ResolveMaterialTexture(string id)
+        {
+            Common.Models.Material mat = GetMaterial(id);
+            if (mat == null)
+            {
+                UnityEngine.Debug.Log($"MATERIAL {id} DOES NOT EXIST");
+                _totalCalls--;
+                yield return null;
+                yield break;
+            }
+
+            string url = $"http://192.168.0.119:5000/api/material/{mat.Id}";
+            UnityEngine.Texture materialTexture = null;
+
+            UnityEngine.Debug.Log(url);
+            using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
+            {
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.isNetworkError)
+                {
+                    UnityEngine.Debug.Log("Error: " + webRequest.error);
+                    yield return null;
+                    _totalCalls--;
+                    yield break;
+                }
+                else if (webRequest.isHttpError)
+                {
+                    // UnityEngine.Debug.Log("Error: " + webRequest.error);
+                    yield return null;
+                    _totalCalls--;
+                    yield break;
+                }
+                else
+                {
+                    materialTexture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
+                }
+            }
+
+            if (materialTexture != null)
+            {
+                UnityEngine.Material baseMaterial = LookupMaterial(mat.Id);
+
+                UnityEngine.Material newMaterial = new UnityEngine.Material(baseMaterial.shader);
+
+                newMaterial.CopyPropertiesFromMaterial(baseMaterial);
+
+                newMaterial.name = mat.Name + " (With Texture)";
+                newMaterial.mainTexture = materialTexture;
+                newMaterial.color = new UnityEngine.Color(
+                    220f / 255f,
+                    220f / 255f,
+                    220f / 255f
+                );
+                newMaterial.SetFloat("_Metallic", (float)mat.Shininess / byte.MaxValue);
+                newMaterial.SetFloat("_Smoothness", (float)mat.Smoothness / byte.MaxValue);
+
+                matLib.Add("_" + id, newMaterial);
+
+                UnityEngine.Debug.Log(JsonConvert.SerializeObject(mat));
+
+                // UnityEngine.GameObject.Find("Test").GetComponent<UnityEngine.MeshRenderer>().material = newMaterial;
+            }
+
+            _totalCalls--;
         }
     }
 }

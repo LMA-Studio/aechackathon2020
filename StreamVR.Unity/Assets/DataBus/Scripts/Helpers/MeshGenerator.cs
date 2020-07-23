@@ -84,12 +84,22 @@ namespace LMAStudio.StreamVR.Unity.Helpers
 
             if (f.MaterialId != null && f.MaterialId != "-1")
             {
-                var mat = MaterialLibrary.LookupMaterial(f.MaterialId);
+                var mat = MaterialLibrary.LookupMaterial("_" + f.MaterialId);
                 if (mat != null)
                 {
                     mr.material = mat;
-                    newFace.name = $"_Mesh Face";
+                    newFace.name = $"_Mesh Face (_{f.MaterialId})";
                 }
+                else
+                {
+                    mat = MaterialLibrary.LookupMaterial(f.MaterialId);
+                    if (mat != null)
+                    {
+                        mr.material = mat;
+                        newFace.name = $"_Mesh Face ({f.MaterialId})";
+                    }
+                }
+
             }
 
             if (GeometryLibrary.GetObject(f.ElementId) == null)

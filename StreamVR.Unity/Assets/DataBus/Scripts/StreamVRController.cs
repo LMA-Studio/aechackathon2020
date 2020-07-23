@@ -28,6 +28,8 @@ using LMAStudio.StreamVR.Common.Models;
 using LMAStudio.StreamVR.Unity.Logic;
 using LMAStudio.StreamVR.Common;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Collections;
 
 namespace LMAStudio.StreamVR.Unity.Scripts
 {
@@ -91,48 +93,77 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             {
                 if (StreamVR.Instance.IsLoaded)
                 {
-                    try
-                    {
-                        System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
-                        s.Start();
-
-                        if (StreamVR.Instance.Materials != null)
-                        {
-                            MaterialLibrary.LoadMaterials(StreamVR.Instance.Materials);
-                        }
-                        if (StreamVR.Instance.Families != null)
-                        {
-                            FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
-                        }
-                        if (StreamVR.Instance.Walls != null)
-                        {
-                            this.GetComponent<WallPlacer>().Place(StreamVR.Instance.Walls);
-                        }
-                        if (StreamVR.Instance.Floors != null)
-                        {
-                            this.GetComponent<FloorPlacer>().Place(StreamVR.Instance.Floors);
-                        }
-                        if (StreamVR.Instance.Ceilings != null)
-                        {
-                            this.GetComponent<CeilingPlacer>().Place(StreamVR.Instance.Ceilings);
-                        }
-                        if (StreamVR.Instance.FamilyInstances != null)
-                        {
-                            this.GetComponent<FamilyPlacer>().Place(StreamVR.Instance.FamilyInstances);
-                            FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
-                        }
-
-                        Debug.Log($"StreamVR Initial load in: {s.ElapsedMilliseconds}ms");
-                        s.Stop();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError(e);
-                    }
-
+                    StartCoroutine(LoadAll());
                     waiting = false;
                 }
             }
+        }
+
+        private IEnumerator LoadAll()
+        {
+            System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+            s.Start();
+
+            if (StreamVR.Instance.Materials != null)
+            {
+                MaterialLibrary.LoadMaterials(StreamVR.Instance.Materials);
+            }
+
+            StartCoroutine(this.LoadSurfaces());
+            StartCoroutine(this.LoadFamiles());
+
+            yield return 0;
+
+            Debug.Log($"StreamVR Initial load in: {s.ElapsedMilliseconds}ms");
+            s.Stop();
+        }
+
+        private IEnumerator LoadSurfaces()
+        {
+            System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+            s.Start();
+
+            if (StreamVR.Instance.Materials != null)
+            {
+                yield return MaterialLibrary.DownloadAllTextures(this);
+            }
+            if (StreamVR.Instance.Walls != null)
+            {
+                this.GetComponent<WallPlacer>().Place(StreamVR.Instance.Walls);
+            }
+            if (StreamVR.Instance.Floors != null)
+            {
+                this.GetComponent<FloorPlacer>().Place(StreamVR.Instance.Floors);
+            }
+            if (StreamVR.Instance.Ceilings != null)
+            {
+                this.GetComponent<CeilingPlacer>().Place(StreamVR.Instance.Ceilings);
+            }
+
+            Debug.Log($"StreamVR Surface load in: {s.ElapsedMilliseconds}ms");
+            s.Stop();
+        }
+
+        private IEnumerator LoadFamiles()
+        {
+            System.Diagnostics.Stopwatch s = new System.Diagnostics.Stopwatch();
+            s.Start();
+
+            if (StreamVR.Instance.Families != null)
+            {
+                FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
+            }
+
+            if (StreamVR.Instance.FamilyInstances != null)
+            {
+                this.GetComponent<FamilyPlacer>().Place(StreamVR.Instance.FamilyInstances);
+                FamilyLibrary.LoadFamilies(StreamVR.Instance.Families);
+            }
+
+            yield return 0;
+
+            Debug.Log($"StreamVR Family load in: {s.ElapsedMilliseconds}ms");
+            s.Stop();
         }
 
 #if UNITY_EDITOR
@@ -150,7 +181,16 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
             comms.Connect();
             Message response = comms.RequestSync(comms.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL" }, 30000);
-            Debug.Log(response);
+            Debug.Log(JsonConvert.SerializeObject(response));
+        }
+
+        [MenuItem("StreamVR/Export all materials")]
+        public static void ExportAllMaterials()
+        {
+            var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
+            comms.Connect();
+            Message response = comms.RequestSync(comms.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL_MATERIALS" }, 30000);
+            Debug.Log(JsonConvert.SerializeObject(response));
         }
 #endif
     }
