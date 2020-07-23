@@ -82,6 +82,7 @@ namespace LMAStudio.StreamVR.Revit
             PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
 
             placeIntElevButton.ToolTip = "Automatically places interior elevations into all bound rooms";
+            placeIntElevButton.LargeImage = new BitmapImage(new Uri($"{assemblyDir}\\StreamVR Logo Revit.png", UriKind.Absolute));
         }
 
         private void AddExportButton(RibbonPanel intElevPanel, UIControlledApplication app)
@@ -94,6 +95,7 @@ namespace LMAStudio.StreamVR.Revit
             PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
 
             placeIntElevButton.ToolTip = "Exports familes to the model server as OBJs";
+            placeIntElevButton.LargeImage = new BitmapImage(new Uri($"{assemblyDir}\\ExportFamilies.png", UriKind.Absolute));
         }
 
         private void AddExportMaterialsButton(RibbonPanel intElevPanel, UIControlledApplication app)
@@ -106,6 +108,7 @@ namespace LMAStudio.StreamVR.Revit
             PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
 
             placeIntElevButton.ToolTip = "Exports basic material data to the model server";
+            placeIntElevButton.LargeImage = new BitmapImage(new Uri($"{assemblyDir}\\ExportMaterials.png", UriKind.Absolute));
         }
 
     }

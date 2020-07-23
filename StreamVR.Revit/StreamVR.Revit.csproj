@@ -105,14 +105,27 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="WPF\StreamVRLogo.png" />
+    <Resource Include="Icons\StreamVRLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Icons\ExportFamilies.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\ExportMaterials.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\StreamVR Logo Revit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <PostBuildEvent>
       MD ".\$(TargetDir)StreamVR\" 2&gt; nul
       MD ".\$(TargetDir)Other\" 2&gt; nul
       MOVE /Y ".\$(TargetDir)*.dll" "D:\binaries\StreamVR\"
+      MOVE /Y ".\$(TargetDir)\Icons\*.png" "D:\binaries\StreamVR\"
       MOVE /Y ".\$(TargetDir)*.addin" "D:\binaries\"
       MOVE /Y ".\$(TargetDir)*.pdb" ".\$(TargetDir)Other\"
       MOVE /Y ".\$(TargetDir)*.xml" ".\$(TargetDir)Other\"

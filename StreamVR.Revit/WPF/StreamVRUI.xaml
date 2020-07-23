@@ -71,11 +71,11 @@
                             </TextBlock>
                         </Grid>
 
-                        <!--<Image Grid.Column="1">
+                        <Image Grid.Column="1" x:Name="StreamVRIcon" >
                             <Image.Source>
-                                <UriSource="/WPF/StreamVRLogo.png" />
+                                <BitmapImage UriSource="../Icons/StreamVRLogo.png" />
                             </Image.Source>
-                        </Image>-->
+                        </Image>
                     </Grid>
 
                     <Grid HorizontalAlignment="Stretch" Margin="0,9">

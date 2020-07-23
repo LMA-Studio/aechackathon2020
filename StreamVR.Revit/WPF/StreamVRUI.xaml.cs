@@ -4,7 +4,9 @@ using LMAStudio.StreamVR.Revit.EventHandlers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,6 +43,13 @@ namespace LMAStudio.StreamVR.Revit.WPF
             InitializeComponent();
             _exEvent = exEvent;
             _handler = handler;
+
+            var assembly = Assembly.GetCallingAssembly();
+            var assemblyDir = new FileInfo(assembly.Location).Directory.FullName;
+            var assemblyName = $"{assemblyDir}\\StreamVRLogo.png";
+            var uri = new Uri(assemblyName);
+            var bitmap = new BitmapImage(uri);
+            StreamVRIcon.Source = bitmap;
         }
 
         public void InitialLoad()
