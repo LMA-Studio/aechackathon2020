@@ -28,7 +28,10 @@ public class PlaceFamilyButtonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        modelInstance.transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime, Space.World);
+        if (modelInstance != null && modelInstance.transform != null)
+        {
+            modelInstance.transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime, Space.World);
+        }
     }
 
     private IEnumerator Load()
@@ -41,9 +44,11 @@ public class PlaceFamilyButtonController : MonoBehaviour
         {
             byte[] objData = cd.result as byte[];
 
+            GameObject tempModel;
+
             using (var textStream = new MemoryStream(objData))
             {
-                modelInstance = new OBJLoader().Load(textStream);
+                tempModel = new OBJLoader().Load(textStream);
             }
 
             double maxX = buttonFamilyData.BoundingBoxMax.X - buttonFamilyData.BoundingBoxMin.X;
@@ -77,11 +82,12 @@ public class PlaceFamilyButtonController : MonoBehaviour
             float depth = Mathf.Sqrt(Mathf.Pow((float)maxX, 2) + Mathf.Pow((float)maxY, 2)) / 2;
             Vector3 translation = Vector3.forward * -depth;
 
-            modelInstance.transform.parent = this.transform;
+            tempModel.transform.parent = this.transform;
 
-            modelInstance.transform.localPosition = translation * newScale;
-            modelInstance.transform.localScale = new Vector3(newScale, newScale, newScale);
-            
+            tempModel.transform.localPosition = translation * newScale;
+            tempModel.transform.localScale = new Vector3(newScale, newScale, newScale);
+
+            modelInstance = tempModel;
         }
         
         this.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = FormatName(buttonFamilyData.FamilyName);

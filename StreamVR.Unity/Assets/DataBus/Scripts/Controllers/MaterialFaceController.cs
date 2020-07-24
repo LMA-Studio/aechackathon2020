@@ -48,14 +48,25 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         {
             if (collision.gameObject.tag == "paint")
             {
-                Debug.Log(collision.gameObject.name);
+                Debug.Log("PAINT!" + collision.gameObject.name);
+
                 var mat = collision.gameObject.GetComponent<MeshRenderer>().material;
                 this.GetComponent<MeshRenderer>().material = mat;
-                Destroy(collision.gameObject);
                 
-                currentMaterial = MaterialLibrary.ReverseGetMaterial(mat.name);
+                Debug.Log($"PAINT MAT {mat.name}");
+
+                string baseName = mat.name.Replace("(Instance)", "").Trim();
+
+                Debug.Log($"PAINT MAT* {baseName}");
+
+                currentMaterial = MaterialLibrary.ReverseGetMaterial(baseName);
+
+                Debug.Log($"PAINT NULL {currentMaterial == null}");
+
                 instanceData.MaterialId = currentMaterial.Id;
                 StreamVR.Instance.PaintFace(instanceData);
+
+                Destroy(collision.gameObject);
             }
         }
     }

@@ -98,6 +98,11 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                     Cancel();
                 }
             }
+            else
+            {
+                lineRenderer.SetPosition(0, Vector3.zero);
+                lineRenderer.SetPosition(1, Vector3.zero);
+            }
         }
 
         private void PutDown()
@@ -121,7 +126,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             placemenu.gameObject.SetActive(true);
         }
 
-        private void Cancel()
+        public void Cancel()
         {
             Debug.Log("CANCELLING " + (placingObject == null).ToString());
 
