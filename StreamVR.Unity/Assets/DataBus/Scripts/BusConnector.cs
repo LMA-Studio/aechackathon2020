@@ -35,6 +35,10 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             comms.Connect();
 
             Debug.Log("Connected");
+            
+            Debug.Log($"> {natsEndpoint}");
+            Debug.Log($"> {username}");
+            Debug.Log($"> {roomCode}");
 
             return comms;
         }

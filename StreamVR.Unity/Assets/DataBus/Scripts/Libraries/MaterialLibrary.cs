@@ -51,6 +51,15 @@ namespace LMAStudio.StreamVR.Unity.Logic
                         kv.Color.Blue / 255f,
                         (100 - kv.Transparency) / 100f
                     );
+                    if (mat.name.Contains("Glass"))
+                    {
+                        mat.color = new UnityEngine.Color(
+                            185 / 255f,
+                            185 / 255f,
+                            224 / 255f,
+                            10 / 255f
+                        );
+                    }
                     if (kv.Transparency > 0)
                     {
                         mat.SetFloat("_Surface", 1);

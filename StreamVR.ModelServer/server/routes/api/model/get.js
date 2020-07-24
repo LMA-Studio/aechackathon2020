@@ -23,12 +23,19 @@ module.exports = function(req, res) {
     }
   }
   
-  res.sendFile(
-    returnPath,
-    (err) => {
-      if (err) {
-        console.error(err);
+  if (!fs.existsSync(returnPath))
+  {
+    res.status(404).send('Not found');
+  }
+  else
+  {
+    res.sendFile(
+      returnPath,
+      (err) => {
+        if (err) {
+          console.error(err);
+        }
       }
-    }
-  );
+    );
+  }
 }

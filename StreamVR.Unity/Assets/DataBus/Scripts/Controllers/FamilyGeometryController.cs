@@ -23,6 +23,9 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 {
     public class FamilyGeometryController : MonoBehaviour
     {
+        public Material DaytimeMaterial;
+        public Material NighttimeMaterial;
+
         public event EventHandler<Collision> CollisionEnter;
         public event EventHandler<Collision> CollisionExit;
 

@@ -160,7 +160,7 @@ MonoBehaviour:
   gravity: -9.81
   groundLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 4608
   additionalHeight: 0.2
 --- !u!143 &1549879056512298521
 CharacterController:

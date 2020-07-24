@@ -26,9 +26,11 @@ namespace LMAStudio.StreamVR.Unity.Logic
 {
     public class FloorPlacer: MonoBehaviour
     {
+        public UnityEngine.XR.Interaction.Toolkit.XRInteractionManager InteractionManager;
+
         public void Place(List<Floor> floors)
         {
-            foreach(var f in floors)
+            foreach (var f in floors)
             {
                 Vector3 midpoint = new Vector3(0, 0, 0);
 
@@ -39,10 +41,14 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 newFloor.AddComponent<HostController>().UpdateInstanceData(f);
                 newFloor.layer = Helpers.Constants.LAYER_FLOOR;
 
+                var newFace = newFloor.AddComponent<UnityEngine.XR.Interaction.Toolkit.TeleportationArea>();
+                newFace.interactionManager = InteractionManager;
+
                 foreach (var fa in f.Faces)
                 {
                     GameObject face = Helpers.MeshGenerator.GenerateFaceMesh(fa, newFloor);
                     face.layer = Helpers.Constants.LAYER_FLOOR;
+                    newFace.colliders.Add(face.GetComponent<MeshCollider>());
                 }
             }
         }

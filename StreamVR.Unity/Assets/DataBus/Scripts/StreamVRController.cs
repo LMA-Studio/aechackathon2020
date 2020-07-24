@@ -52,6 +52,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
         private void Start()
         {
+            this.waiting = false;
+
             StreamVR.Instance.Connect(new StreamVROptions
             {
                 LoadMaterials = LoadMaterials,
@@ -65,6 +67,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             if (Character != null)
             {
                 View3D so = StreamVR.Instance.GetStartingOrientation();
+                Debug.Log(JsonConvert.SerializeObject(so));
                 Character.transform.position = new Vector3(
                     (float)so.Position.X * Helpers.Constants.M_PER_FT,
                     (float)so.Position.Z * Helpers.Constants.M_PER_FT,
@@ -84,7 +87,17 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 );
             }
 
-            Task.Run(StreamVR.Instance.LoadAllAsync);
+            Task t = Task.Run(StreamVR.Instance.LoadAllAsync);
+            StartCoroutine(WaitForAsync(t));
+        }
+
+        private IEnumerator WaitForAsync(Task t)
+        {
+            while(!t.IsCompleted && !t.IsFaulted && !t.IsCanceled)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+            this.waiting = true;
         }
         
         private void Update()

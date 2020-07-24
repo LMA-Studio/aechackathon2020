@@ -251,7 +251,7 @@ namespace LMAStudio.StreamVR.Unity.Helpers
                 if (builder.Value.PushedFaceCount == 0)
                     continue;
 
-                var builtObj = builder.Value.Build();
+                var builtObj = builder.Value.Build(Lights.Count > 0);
                 builtObj.transform.SetParent(obj.transform, false);
                 builtObj.layer = Helpers.Constants.LAYER_FAMILY;
             }

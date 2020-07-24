@@ -52,25 +52,45 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             }
         }
 
-        public GameObject Build()
+        public GameObject Build(bool hasLight)
         {
             var go = new GameObject(_name);
+
+            Scripts.FamilyGeometryController geoController = go.AddComponent<Scripts.FamilyGeometryController>();
 
             //add meshrenderer
             var mr = go.AddComponent<MeshRenderer>();
             int submesh = 0;
-
-
+            
             //locate the material for each submesh
             Material[] materialArray = new Material[_materialIndices.Count];
             foreach (var kvp in _materialIndices)
             {
                 Material material = Logic.MaterialLibrary.LookupMaterial(kvp.Key);
+
+                if (hasLight && material != null)
+                {
+                    if (material.name.Contains("Glass") || material.name.Contains("Bulb"))
+                    {
+                        geoController.NighttimeMaterial = (Material)Resources.Load("Glow", typeof(Material));
+                    }
+                    else if (material.name.Contains("Lampscreen"))
+                    {
+                        geoController.NighttimeMaterial = (Material)Resources.Load("GlowShade", typeof(Material));
+                    }
+                }
+
                 if (material == null)
                 {
                     material = CreateNullMaterial();
                     material.name = kvp.Key;
                 }
+
+                if (geoController.NighttimeMaterial != null)
+                {
+                    geoController.DaytimeMaterial = material;
+                }
+
                 materialArray[submesh] = material;
                 submesh++;
             }
@@ -115,7 +135,10 @@ namespace LMAStudio.StreamVR.Unity.Helpers
             rb.isKinematic = true;
             rb.constraints = RigidbodyConstraints.FreezeAll;
 
-            go.AddComponent<Scripts.FamilyGeometryController>();
+            if (geoController.NighttimeMaterial != null)
+            {
+                Logic.FamilyInstanceLibrary.AddLight(go);
+            }
 
             //
             return go;

@@ -26,10 +26,21 @@ namespace LMAStudio.StreamVR.Unity.Logic
     public static class FamilyInstanceLibrary
     {
         private static Dictionary<string, GameObject> lib = new Dictionary<string, GameObject>();
+        private static List<GameObject> lights = new List<GameObject>();
 
         public static void AddFamily(FamilyInstance fam, GameObject go)
         {
             lib.Add(fam.Id, go);
+        }
+
+        public static void AddLight(GameObject go)
+        {
+            lights.Add(go);
+        }
+
+        public static IEnumerable<GameObject> GetAllLights()
+        {
+            return lights;
         }
 
         public static GameObject GetFamily(string id)

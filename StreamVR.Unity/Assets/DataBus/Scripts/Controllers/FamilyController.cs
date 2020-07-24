@@ -176,6 +176,10 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             this.instanceData = f;
             this.InstanceData = Newtonsoft.Json.JsonConvert.SerializeObject(f);
             this.fam = FamilyLibrary.GetFamily(f.FamilyId);
+            if (this.fam == null)
+            {
+                throw new System.Exception("Family " + f.FamilyId + " is not loaded");
+            }
             if (f.HostId != null)
             {
                 this.host = GeometryLibrary.GetObject(f.HostId);
