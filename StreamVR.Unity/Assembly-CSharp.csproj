@@ -36,23 +36,60 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\DataBus\Scripts\BusConnector.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Controllers\FamilyController.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Controllers\FamilyGeometryController.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Controllers\HostController.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Controllers\MaterialFaceController.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Extensions\XYZExtensions.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Helpers\CharWordReader.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Helpers\Constants.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Helpers\CoroutineWithData.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Helpers\MeshGenerator.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Helpers\OBJLoader.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Helpers\OBJObjectBuilder.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Libraries\FamilyInstanceLibrary.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Libraries\FamilyLibrary.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Libraries\GeometryLibrary.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Libraries\MaterialLibrary.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Placers\CeilingPlacer.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Placers\FamilyPlacer.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Placers\FloorPlacer.cs" />
+     <Compile Include="Assets\DataBus\Scripts\Placers\WallPlacer.cs" />
+     <Compile Include="Assets\DataBus\Scripts\StreamVR.cs" />
+     <Compile Include="Assets\DataBus\Scripts\StreamVRController.cs" />
      <Compile Include="Assets\Scripts\ClickPaintMenu.cs" />
      <Compile Include="Assets\Scripts\ClickPlaceMenu.cs" />
+     <Compile Include="Assets\Scripts\ClickStartUpMenu.cs" />
      <Compile Include="Assets\Scripts\ContinuousMovement.cs" />
+     <Compile Include="Assets\Scripts\DefaultMaterialsForPalette.cs" />
+     <Compile Include="Assets\Scripts\DeletePointerController.cs" />
+     <Compile Include="Assets\Scripts\FamilyMovementPointerController.cs" />
+     <Compile Include="Assets\Scripts\FamilyPlacementPointerController.cs" />
      <Compile Include="Assets\Scripts\HandPresence.cs" />
+     <Compile Include="Assets\Scripts\InputFieldHandler.cs" />
+     <Compile Include="Assets\Scripts\KeyboardClick.cs" />
+     <Compile Include="Assets\Scripts\LoadingText.cs" />
      <Compile Include="Assets\Scripts\LocomotionController.cs" />
+     <Compile Include="Assets\Scripts\LookMenuInteraction.cs" />
+     <Compile Include="Assets\Scripts\MaterialMenuLoader.cs" />
      <Compile Include="Assets\Scripts\MenuController.cs" />
+     <Compile Include="Assets\Scripts\NightToggle.cs" />
      <Compile Include="Assets\Scripts\PaintSelectButtonController.cs" />
      <Compile Include="Assets\Scripts\PaintSelectMenuController.cs" />
      <Compile Include="Assets\Scripts\PaintWandEndController.cs" />
+     <Compile Include="Assets\Scripts\PlaceElementsMenuController.cs" />
+     <Compile Include="Assets\Scripts\PlaceFamilyButtonController.cs" />
      <Compile Include="Assets\Scripts\RadialMenuController.cs" />
      <Compile Include="Assets\Scripts\RotatePaint.cs" />
      <Compile Include="Assets\Scripts\ShootingPaintScript.cs" />
      <Compile Include="Assets\Scripts\SimpleCameraController.cs" />
+     <Compile Include="Assets\Scripts\WaitForLoad.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
+     <None Include="Assets\DataBus\Libs\JsonDotNet\link.xml" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
      <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
@@ -243,6 +280,15 @@
     </Reference>
     <Reference Include="UnityEditor">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.1f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="LMAStudio.StreamVR.Common">
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Assets/DataBus/Libs/LMAStudio.StreamVR.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NATS.Client">
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Assets/DataBus/Libs/NATS.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Assets/DataBus/Libs/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.1f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -590,91 +636,91 @@
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.1f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Unity.XR.Management">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Management.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Management.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Subsystem.Registration">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll</HintPath>
     </Reference>
     <Reference Include="Unity.XR.Interaction.Toolkit">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Interaction.Toolkit.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Interaction.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Shaders">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.XR.Interaction.Toolkit.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Interaction.Toolkit.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Interaction.Toolkit.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.XR.Oculus">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Oculus.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Oculus.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.XR.Oculus.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Oculus.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Oculus.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.XR.LegacyInputHelpers">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEngine.XR.LegacyInputHelpers.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEngine.XR.LegacyInputHelpers.dll</HintPath>
     </Reference>
     <Reference Include="Unity.XR.Management.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Management.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.XR.Management.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.SpatialTracking">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEditor.SpatialTracking.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEditor.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.SpatialTracking">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEngine.SpatialTracking.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ShaderGraph.Editor">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.XR.LegacyInputHelpers">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEditor.XR.LegacyInputHelpers.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEditor.XR.LegacyInputHelpers.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-        <HintPath>C:/Workspace/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+        <HintPath>D:/Development/workspace/LMAStudio/AECHackathon2020/StreamVR.Unity/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

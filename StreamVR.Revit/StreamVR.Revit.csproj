@@ -120,7 +120,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+ <!--  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <PostBuildEvent>
       MD ".\$(TargetDir)StreamVR\" 2&gt; nul
       MD ".\$(TargetDir)Other\" 2&gt; nul
@@ -130,6 +130,6 @@
       MOVE /Y ".\$(TargetDir)*.pdb" ".\$(TargetDir)Other\"
       MOVE /Y ".\$(TargetDir)*.xml" ".\$(TargetDir)Other\"
     </PostBuildEvent>
-  </PropertyGroup>
+  </PropertyGroup> -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
