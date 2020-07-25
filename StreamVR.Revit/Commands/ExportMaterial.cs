@@ -33,6 +33,7 @@ namespace LMAStudio.StreamVR.Revit.Commands
     {
         private readonly Action<string> _log;
         private readonly IGenericConverter _converter;
+        private readonly string _modelServerUrl;
 
         private readonly List<string> textureProperties = new List<string>
         {
@@ -40,10 +41,11 @@ namespace LMAStudio.StreamVR.Revit.Commands
             "opaque_albedo"
         };
 
-        public ExportMaterial(Action<string> log, IGenericConverter converter)
+        public ExportMaterial(Action<string> log, IGenericConverter converter, string modelServerUrl)
         {
             _log = log;
             _converter = converter;
+            _modelServerUrl = modelServerUrl;
         }
 
         public Message Execute(Document doc, Message msg)
@@ -139,7 +141,8 @@ namespace LMAStudio.StreamVR.Revit.Commands
                 form.Add(new StringContent(filename ?? ""), "fileName");
                 form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", filename);
 
-                string url = $"http://192.168.0.119:5000/api/material/{dto.Id}";
+                string url = $"{_modelServerUrl}/api/material/{dto.Id}";
+                _log("Uploading material to: " + url);
                 HttpResponseMessage response = httpClient.PostAsync(url, form).Result;
 
                 response.EnsureSuccessStatusCode();

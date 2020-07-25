@@ -36,6 +36,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 {
     public class StreamVROptions
     {
+        public string NatsBusUrl = "";
+        public string ModelServerUrl = "";
         public bool LoadMaterials = true;
         public bool LoadFamilies = true;
         public bool LoadWalls = true;
@@ -75,9 +77,18 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         public void Connect(StreamVROptions options)
         {
             this.options = options;
+
+            if (!string.IsNullOrEmpty(this.options.NatsBusUrl))
+            {
+                BusConnector.ConfigureEndpoint(this.options.NatsBusUrl);
+            }
+            if (!string.IsNullOrEmpty(this.options.ModelServerUrl))
+            {
+                FamilyLibrary.ConfigureModelServerURL(this.options.ModelServerUrl);
+                MaterialLibrary.ConfigureModelServerURL(this.options.ModelServerUrl);
+            }
+
             this.comms = BusConnector.Connect();
-            //var view = this.GetStartingOrientation();
-            //Debug.Log(JsonConvert.SerializeObject(view));
         }
 
         #region Loaders
@@ -318,17 +329,15 @@ namespace LMAStudio.StreamVR.Unity.Scripts
             });
         }
 
-        public void PaintFace(Face newFace)
+        public IEnumerator PaintFace(Face newFace)
         {
             Debug.Log($"Updating material {newFace.ElementId} {newFace.FaceIndex} {newFace.MaterialId}");
 
-            Message response = this.ServerRequest(new Message
+            yield return this.ServerRequestCoroutine(new Message
             {
                 Type = "PAINT",
                 Data = JsonConvert.SerializeObject(newFace)
             });
-
-            Debug.Log(JsonConvert.SerializeObject(response));
         }
 
         #endregion
@@ -421,7 +430,9 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
             if (totalIteration <= 100)
             {
-                yield return requestTask.Result;
+                var result = requestTask.Result;
+                Debug.Log(JsonConvert.SerializeObject(result));
+                yield return result;
             }
             else
             {

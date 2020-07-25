@@ -29,8 +29,15 @@ namespace LMAStudio.StreamVR.Unity.Logic
 {
     public static class MaterialLibrary
     {
+        private static string _ModelServerURL = "";
+
         private static Dictionary<string, Material> lib = new Dictionary<string, Material>();
         private static Dictionary<string, UnityEngine.Material> matLib = new Dictionary<string, UnityEngine.Material>();
+
+        public static void ConfigureModelServerURL(string url)
+        {
+            _ModelServerURL = url;
+        }
 
         public static void LoadMaterials(List<Material> materials)
         {
@@ -162,7 +169,7 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 yield break;
             }
 
-            string url = $"http://192.168.0.119:5000/api/material/{mat.Id}";
+            string url = $"{_ModelServerURL}/api/material/{mat.Id}";
             UnityEngine.Texture materialTexture = null;
 
             UnityEngine.Debug.Log(url);

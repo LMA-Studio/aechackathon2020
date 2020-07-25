@@ -36,11 +36,13 @@ namespace LMAStudio.StreamVR.Revit.Commands
     {
         private readonly Action<string> _log;
         private readonly IGenericConverter _converter;
+        private readonly string _modelServerUrl;
 
-        public Export(Action<string> log, IGenericConverter converter)
+        public Export(Action<string> log, IGenericConverter converter, string modelServerUrl)
         {
             _log = log;
             _converter = converter;
+            _modelServerUrl = modelServerUrl;
         }
 
         public Message Execute(Document doc, Message msg)
@@ -235,7 +237,8 @@ namespace LMAStudio.StreamVR.Revit.Commands
                 form.Add(new StringContent(dto.Tag ?? ""), "tag");
                 form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{dto.FamilyId}.obj");
 
-                string url = $"http://192.168.0.119:5000/api/model/{dto.FamilyId}";
+                string url = $"{_modelServerUrl}/api/model/{dto.FamilyId}";
+                _log("Uploading model to: " + url);
                 HttpResponseMessage response = httpClient.PostAsync(url, form).Result;
 
                 response.EnsureSuccessStatusCode();
@@ -252,7 +255,8 @@ namespace LMAStudio.StreamVR.Revit.Commands
 
                 form.Add(new ByteArrayContent(file_bytes, 0, file_bytes.Length), "file", $"{varaintId}.obj");
 
-                string url = $"http://192.168.0.119:5000/api/model/{familyId}?v={varaintId ?? ""}";
+                string url = $"{_modelServerUrl}/api/model/{familyId}?v={varaintId ?? ""}";
+                _log("Uploading model variant to: " + url);
                 HttpResponseMessage response = httpClient.PostAsync(url, form).Result;
 
                 response.EnsureSuccessStatusCode();

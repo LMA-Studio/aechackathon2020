@@ -39,6 +39,9 @@ namespace LMAStudio.StreamVR.Unity.Scripts
     [RequireComponent(typeof(FamilyPlacer))]
     public class StreamVRController : MonoBehaviour
     {
+        public string NatsBusUrl = "";
+        public string ModelServerUrl = "";
+
         public bool LoadMaterials = true;
         public bool LoadFamilies = true;
         public bool LoadWalls = true;
@@ -56,6 +59,8 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 
             StreamVR.Instance.Connect(new StreamVROptions
             {
+                NatsBusUrl = NatsBusUrl,
+                ModelServerUrl = ModelServerUrl,
                 LoadMaterials = LoadMaterials,
                 LoadFamilies = LoadFamilies,
                 LoadWalls = LoadWalls,
@@ -183,7 +188,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         [MenuItem("StreamVR/Shutdown Server")]
         public static void ShutdownInterface()
         {
-            var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
+            var comms = new Communicator("streamvr.lm2.me:4222", "lisamarie.mueller", "123456", Debug.Log);
             comms.Connect();
             comms.Publish(comms.TO_SERVER_CHANNEL, new Message { Type = "EXIT" });
         }
@@ -191,7 +196,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         [MenuItem("StreamVR/Export all")]
         public static void ExportAll()
         {
-            var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
+            var comms = new Communicator("streamvr.lm2.me:4222", "lisamarie.mueller", "123456", Debug.Log);
             comms.Connect();
             Message response = comms.RequestSync(comms.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL" }, 30000);
             Debug.Log(JsonConvert.SerializeObject(response));
@@ -200,7 +205,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
         [MenuItem("StreamVR/Export all materials")]
         public static void ExportAllMaterials()
         {
-            var comms = new Communicator("192.168.0.119:7002", "lisamarie.mueller", "123456", Debug.Log);
+            var comms = new Communicator("streamvr.lm2.me:4222", "lisamarie.mueller", "123456", Debug.Log);
             comms.Connect();
             Message response = comms.RequestSync(comms.TO_SERVER_CHANNEL, new Message { Type = "EXPORT_ALL_MATERIALS" }, 30000);
             Debug.Log(JsonConvert.SerializeObject(response));

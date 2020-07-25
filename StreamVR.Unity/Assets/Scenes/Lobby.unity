@@ -432,7 +432,7 @@ PrefabInstance:
     - target: {fileID: 7155724081052605529, guid: d7ec6942ad990234bbd0b398f75cabc3,
         type: 3}
       propertyPath: m_Text
-      value: 192.168.0.119:7002
+      value: streamvr.lm2.me
       objectReference: {fileID: 0}
     - target: {fileID: 7464817975669001033, guid: d7ec6942ad990234bbd0b398f75cabc3,
         type: 3}
@@ -1237,7 +1237,7 @@ PrefabInstance:
     - target: {fileID: 8534082066471709113, guid: 98603c8df918ff54f9211b7d699755f6,
         type: 3}
       propertyPath: m_Text
-      value: 123456
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8610224660598507844, guid: 98603c8df918ff54f9211b7d699755f6,
         type: 3}

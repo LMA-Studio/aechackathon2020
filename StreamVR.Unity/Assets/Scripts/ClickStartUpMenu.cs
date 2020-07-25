@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LMAStudio.StreamVR.Unity.Logic;
 using LMAStudio.StreamVR.Unity.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,10 +41,16 @@ public class ClickStartUpMenu : MonoBehaviour
     {
         urlError.text = "";
 
-        BusConnector.ConfigureEndpoint(urlInput.text);
         try
         {
-            StreamVR.Instance.Connect(new StreamVROptions());
+            string baseUrl = urlInput.text;
+
+            StreamVR.Instance.Connect(new StreamVROptions()
+            {
+                NatsBusUrl = baseUrl + ":4222",
+                ModelServerUrl = baseUrl + ":8080"
+            });
+
             ShowRoomCodeMenu();
         }
 

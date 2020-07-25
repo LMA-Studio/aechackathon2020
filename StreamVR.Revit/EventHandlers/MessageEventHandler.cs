@@ -44,8 +44,8 @@ namespace LMAStudio.StreamVR.Revit.EventHandlers
             this.Command_Set = new Set(Debug, uiDoc, this.Converter);
             this.Command_Paint = new Paint(Debug, this.Converter);
             this.Command_Create = new Create(Debug, this.Converter);
-            this.Command_Export = new Export(Debug, this.Converter);
-            this.Command_ExportMaterial = new ExportMaterial(Debug, this.Converter);
+            this.Command_Export = new Export(Debug, this.Converter, StreamVRApp.Instance.ModelServerURL);
+            this.Command_ExportMaterial = new ExportMaterial(Debug, this.Converter, StreamVRApp.Instance.ModelServerURL);
             this.Command_Delete = new Delete(Debug, this.Converter);
 
             Message request = StreamVRApp.Instance.CurrentRequest;

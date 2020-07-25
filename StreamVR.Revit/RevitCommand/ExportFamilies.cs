@@ -58,7 +58,7 @@ namespace LMAStudio.StreamVR.Revit
 
             this.Converter = new GenericConverter(Debug);
 
-            IBaseCommand command = new Export(Debug, this.Converter);
+            IBaseCommand command = new Export(Debug, this.Converter, StreamVRApp.Instance.ModelServerURL);
 
             IEnumerable<string> families = new FilteredElementCollector(doc).
                             OfClass(typeof(FamilySymbol)).

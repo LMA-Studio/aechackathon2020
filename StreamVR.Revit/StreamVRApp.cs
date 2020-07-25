@@ -76,7 +76,11 @@ namespace LMAStudio.StreamVR.Revit
             }
         }
 
+        public string BaseServerURL = "streamvr.lm2.me";
         public string StartingView;
+
+        public string NatsServerURL { get { return "nats://" + BaseServerURL + ":4222"; } }
+        public string ModelServerURL { get { return "http://" + BaseServerURL + ":8080"; } }
 
         public Result OnShutdown(UIControlledApplication application)
         {
@@ -126,10 +130,10 @@ namespace LMAStudio.StreamVR.Revit
                     uiapp.Application.WriteJournalComment(msg, true);
                 })
                 {
-                    ServerURL = "192.168.0.119:7002",
+                    ServerURL = StreamVRApp.Instance.BaseServerURL,
                     UserName = uiapp.Application.Username,
                     RoomCode = "123456",
-                    StartingView = "3D View 3",
+                    StartingView = startingViews.FirstOrDefault()?.Name ?? "",
                     StartingViewOptions = startingViews.Select(v => v.Name)
                 };
                 _uiForm.InitialLoad();

@@ -30,8 +30,15 @@ namespace LMAStudio.StreamVR.Unity.Logic
 {
     public static class FamilyLibrary
     {
+        private static string _ModelServerURL = "";
+
         private static Dictionary<string, Family> lib = new Dictionary<string, Family>();
         private static IEnumerable<string> tags = new List<string>();
+
+        public static void ConfigureModelServerURL (string url)
+        {
+            _ModelServerURL = url;
+        }
 
         public static void LoadFamilies(List<Family> families)
         {
@@ -88,7 +95,7 @@ namespace LMAStudio.StreamVR.Unity.Logic
                 yield break;
             }
 
-            string url = $"http://192.168.0.119:5000/api/model/{fam.FamilyId}?v={variantId ?? ""}";
+            string url = $"{_ModelServerURL }/api/model/{fam.FamilyId}?v={variantId ?? ""}";
 
             Debug.Log(url);
             using (var webRequest = new UnityWebRequest(url))

@@ -62,7 +62,7 @@ namespace LMAStudio.StreamVR.Revit.WPF
         {
             Task.Run(() =>
             {
-                using (var cc = new Communicator(this.ServerURL, this.UserName, this.RoomCode, _log))
+                using (var cc = new Communicator(StreamVRApp.Instance.NatsServerURL, this.UserName, this.RoomCode, _log))
                 {
                     cc.Connect();
                     cc.Subscribe(cc.TO_SERVER_CHANNEL, (Message msg) =>
@@ -181,6 +181,7 @@ namespace LMAStudio.StreamVR.Revit.WPF
             RoomCode = txtbx_roomcode.Text;
             StartingView = cbx_startingview.SelectedValue as string;
 
+            StreamVRApp.Instance.BaseServerURL = ServerURL;
             StreamVRApp.Instance.StartingView = StartingView;
 
             this.SetVisibility(true);

@@ -64,7 +64,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
                 Debug.Log($"PAINT NULL {currentMaterial == null}");
 
                 instanceData.MaterialId = currentMaterial.Id;
-                StreamVR.Instance.PaintFace(instanceData);
+                StartCoroutine(StreamVR.Instance.PaintFace(instanceData));
 
                 Destroy(collision.gameObject);
             }

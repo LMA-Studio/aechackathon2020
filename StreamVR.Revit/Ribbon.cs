@@ -82,7 +82,7 @@ namespace LMAStudio.StreamVR.Revit
             PushButton placeIntElevButton = intElevPanel.AddItem(intElevButtonData) as PushButton;
 
             placeIntElevButton.ToolTip = "Automatically places interior elevations into all bound rooms";
-            placeIntElevButton.LargeImage = new BitmapImage(new Uri($"{assemblyDir}\\StreamVR Logo Revit.png", UriKind.Absolute));
+            placeIntElevButton.LargeImage = new BitmapImage(new Uri($"{assemblyDir}\\StreamVRLogoRevit.png", UriKind.Absolute));
         }
 
         private void AddExportButton(RibbonPanel intElevPanel, UIControlledApplication app)

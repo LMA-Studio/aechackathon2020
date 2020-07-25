@@ -11,7 +11,7 @@ namespace LMAStudio.StreamVR.Unity.Scripts
 {
     public class BusConnector
     {
-        private static string natsEndpoint = "192.168.0.119:7002";
+        private static string natsEndpoint = "streamvr.lm2.me:4222";
         private static string username = "lisamarie.mueller";
         private static string roomCode = "123456";
 

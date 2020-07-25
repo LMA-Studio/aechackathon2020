@@ -549,7 +549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuName: 
-  ItemTag: 
+  ItemTag: Specialty Equipment
   Icon: {fileID: 0}
 --- !u!1 &2852516423003733751
 GameObject:

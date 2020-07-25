@@ -58,7 +58,8 @@ namespace LMAStudio.StreamVR.Revit
 
             this.Converter = new GenericConverter(Debug);
 
-            IBaseCommand command = new ExportMaterial(Debug, this.Converter);
+            Debug("Exporting to " + StreamVRApp.Instance.ModelServerURL);
+            IBaseCommand command = new ExportMaterial(Debug, this.Converter, StreamVRApp.Instance.ModelServerURL);
 
             IEnumerable<string> materials = new FilteredElementCollector(doc).
                             OfClass(typeof(Material)).
